@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/naver_news_service.dart';
+import '../utils/html_utils.dart';
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
@@ -26,18 +28,21 @@ class NewsScreen extends StatelessWidget {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
+            final title = HtmlUtils.parseHtmlString(item['title']);
+            final description = HtmlUtils.parseHtmlString(item['description']);
+            final pubDate = item['pubDate'];
+            final originallink = item['originallink'];
 
             return Card(
               margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
               child: ListTile(
-                title: Text('${item['title']}'),
+                title: Text(title),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${item['description']}'),
-                    Text('${item['pubDate']}'),
-                  ],
+                  children: [Text(description), Text(pubDate)],
                 ),
+                onTap: () => launchUrl(Uri.parse(originallink)),
               ),
             );
           },
