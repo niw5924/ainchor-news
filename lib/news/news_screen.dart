@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../services/naver_news_service.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/html_utils.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class NewsScreen extends StatelessWidget {
             final item = items[index];
             final title = HtmlUtils.parseHtmlString(item['title']);
             final description = HtmlUtils.parseHtmlString(item['description']);
-            final pubDate = item['pubDate'];
+            final pubDate = DateTimeUtils.parsePubDateString(item['pubDate']);
             final originallink = item['originallink'];
 
             return Card(
