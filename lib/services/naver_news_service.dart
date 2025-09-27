@@ -1,0 +1,28 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class NaverNewsService {
+  Future<List> fetchNews() async {
+    final dio = Dio();
+    final naverClientId = dotenv.env['NAVER_CLIENT_ID'];
+    final naverClientSecret = dotenv.env['NAVER_CLIENT_SECRET'];
+
+    final response = await dio.get(
+      'https://openapi.naver.com/v1/search/news.json',
+      queryParameters: {'query': '스포츠', 'display': 10},
+      options: Options(
+        headers: {
+          'X-Naver-Client-Id': naverClientId,
+          'X-Naver-Client-Secret': naverClientSecret,
+        },
+      ),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('HTTP ${response.statusCode}: ${response.data}');
+    }
+
+    final items = response.data['items'];
+    return items;
+  }
+}

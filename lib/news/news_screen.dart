@@ -1,36 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../services/naver_news_service.dart';
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
 
-  Future<List> fetchTitles() async {
-    final naverClientId = dotenv.env['NAVER_CLIENT_ID'];
-    final naverClientSecret = dotenv.env['NAVER_CLIENT_SECRET'];
-    final dio = Dio();
-    final response = await dio.get(
-      'https://openapi.naver.com/v1/search/news.json',
-      queryParameters: {'query': '스포츠', 'display': 10},
-      options: Options(
-        headers: {
-          'X-Naver-Client-Id': naverClientId,
-          'X-Naver-Client-Secret': naverClientSecret,
-        },
-      ),
-    );
-    if (response.statusCode != 200) {
-      throw Exception('HTTP ${response.statusCode}: ${response.data}');
-    }
-    final items = response.data['items'];
-    final titles = items.map((e) => e['title']).toList();
-    return titles;
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List>(
-      future: fetchTitles(),
+      future: NaverNewsService().fetchNews(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
@@ -38,14 +16,30 @@ class NewsScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
         }
-        final titles = snapshot.data!;
-        if (titles.isEmpty) {
+        final items = snapshot.data!;
+        if (items.isEmpty) {
           return const Center(child: Text('표시할 뉴스가 없어요.'));
         }
-        return ListView.builder(
-          itemCount: titles.length,
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          itemCount: items.length,
           itemBuilder: (context, index) {
-            return ListTile(title: Text('${titles[index]}'));
+            final item = items[index];
+
+            return Card(
+              margin: EdgeInsets.zero,
+              child: ListTile(
+                title: Text('${item['title']}'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${item['description']}'),
+                    Text('${item['pubDate']}'),
+                  ],
+                ),
+              ),
+            );
           },
         );
       },
