@@ -37,6 +37,8 @@ dependencies:
   go_router: ^16.2.4
   flutter_dotenv: ^6.0.0
   dio: ^5.9.0
+  html: ^0.15.6
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
