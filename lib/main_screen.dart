@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'constants/app_colors.dart';
+
 class MainScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -9,9 +11,15 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AInchor News')),
+      appBar: AppBar(
+        title: const Text('AInchor News'),
+        backgroundColor: AppColors.appBarBackground,
+      ),
+      backgroundColor: AppColors.scaffoldBackground,
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColors.bottomNavBackground,
+        indicatorColor: AppColors.primary,
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: (i) => navigationShell.goBranch(i),
         destinations: const [

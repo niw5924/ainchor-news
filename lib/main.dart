@@ -17,10 +17,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: appRouter,
-      title: 'AInchor News',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
-    );
+    return MaterialApp.router(routerConfig: appRouter, title: 'AInchor News');
   }
 }

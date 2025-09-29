@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants/app_colors.dart';
 import '../constants/news_enums.dart';
 import '../services/naver_news_service.dart';
 import '../utils/date_time_utils.dart';
@@ -19,6 +20,9 @@ class NewsScreen extends StatelessWidget {
         children: [
           TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
+            indicatorColor: AppColors.primary,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: Colors.black,
             tabs: categories.map((c) => Tab(text: c.label)).toList(),
           ),
           Expanded(
@@ -67,6 +71,7 @@ class _NewsList extends StatelessWidget {
             return Card(
               margin: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
+              color: AppColors.cardBackground,
               child: ListTile(
                 title: Text(title),
                 subtitle: Column(
