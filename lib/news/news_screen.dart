@@ -22,7 +22,7 @@ class NewsScreen extends StatelessWidget {
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorColor: AppColors.primary,
             labelColor: AppColors.primary,
-            unselectedLabelColor: Colors.black,
+            unselectedLabelColor: AppColors.secondary,
             tabs: categories.map((c) => Tab(text: c.label)).toList(),
           ),
           Expanded(
