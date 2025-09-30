@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import 'avatar/avatar_screen.dart';
+import 'anchor/anchor_screen.dart';
 import 'main_screen.dart';
 import 'news/news_screen.dart';
 
@@ -24,9 +24,9 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/avatar',
-              name: 'avatar',
-              builder: (context, state) => const AvatarScreen(),
+              path: '/anchor',
+              name: 'anchor',
+              builder: (context, state) => const AnchorScreen(),
             ),
           ],
         ),

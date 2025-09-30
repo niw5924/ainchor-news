@@ -28,8 +28,8 @@ class MainScreen extends StatelessWidget {
             label: '뉴스',
           ),
           NavigationDestination(
-            icon: Icon(Icons.face_6_outlined),
-            label: '아바타',
+            icon: Icon(Icons.record_voice_over_outlined),
+            label: '앵커',
           ),
         ],
       ),
