@@ -67,7 +67,7 @@ class _NewsList extends StatelessWidget {
             final description = HtmlUtils.parseHtmlString(item['description']);
             final pubDate = DateTimeUtils.parsePubDateString(item['pubDate']);
             final originallink = item['originallink'];
-            final host = Uri.parse(originallink).host.substring(4);
+            final host = Uri.parse(originallink).host.replaceFirst('www.', '');
 
             return Card(
               margin: EdgeInsets.zero,
@@ -82,6 +82,12 @@ class _NewsList extends StatelessWidget {
                     Text(description),
                     const SizedBox(height: 4),
                     Text(pubDate),
+                    Text(
+                      host,
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                   ],
                 ),
                 onTap: () => launchUrl(Uri.parse(originallink)),
