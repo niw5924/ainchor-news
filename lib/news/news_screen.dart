@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/app_colors.dart';
-import '../constants/news_enums.dart';
+import '../constants/news_category_enums.dart';
 import '../services/naver_news_service.dart';
 import '../utils/date_time_utils.dart';
 import '../utils/html_utils.dart';
