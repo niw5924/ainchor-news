@@ -10,23 +10,33 @@ class AnchorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final anchor = Anchor.jihye;
+
     return Column(
       children: [
         Flexible(
-          flex: 2,
-          child: Center(
-            child: RiveAnimation.asset(
-              'assets/rives/jihye_anchor.riv',
-              fit: BoxFit.contain,
+          flex: 6,
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(16),
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: Card(
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              color: AppColors.cardBackground,
+              child: RiveAnimation.asset(
+                'assets/rives/jihye_anchor.riv',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),
-        Divider(),
+        Flexible(flex: 1, child: Center(child: Divider())),
         Flexible(
-          flex: 1,
+          flex: 3,
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.6,
             alignment: Alignment.center,
+            padding: const EdgeInsets.all(16),
+            width: MediaQuery.of(context).size.width * 0.7,
             child: Card(
               margin: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
