@@ -8,4 +8,6 @@ class AppColors {
   static const Color scaffoldBackground = Color(0xFFEEF2F7);
   static const Color bottomNavBackground = Color(0xFFE6EDF7);
   static const Color cardBackground = Color(0xFFFEFEFF);
+
+  static const Color divider = Color(0xFFD9E3F2);
 }

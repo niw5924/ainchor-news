@@ -14,7 +14,7 @@ class AnchorScreen extends StatelessWidget {
     return Column(
       children: [
         Flexible(
-          flex: 6,
+          flex: 2,
           child: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(16),
@@ -30,9 +30,9 @@ class AnchorScreen extends StatelessWidget {
             ),
           ),
         ),
-        Flexible(flex: 1, child: Center(child: Divider())),
+        Divider(color: AppColors.divider),
         Flexible(
-          flex: 3,
+          flex: 1,
           child: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(16),
