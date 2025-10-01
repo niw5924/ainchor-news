@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 
 import '../constants/anchor_enums.dart';
+import '../constants/app_colors.dart';
 
 class AnchorScreen extends StatelessWidget {
   const AnchorScreen({super.key});
@@ -23,9 +24,18 @@ class AnchorScreen extends StatelessWidget {
         Divider(),
         Flexible(
           flex: 1,
-          child: ListTile(
-            title: Text('${anchor.nameKo} (${anchor.nameEn})'),
-            subtitle: Text(anchor.voiceStyle),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.6,
+            alignment: Alignment.center,
+            child: Card(
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              color: AppColors.cardBackground,
+              child: ListTile(
+                title: Text('${anchor.nameKo} (${anchor.nameEn})'),
+                subtitle: Text(anchor.voiceStyle),
+              ),
+            ),
           ),
         ),
       ],
