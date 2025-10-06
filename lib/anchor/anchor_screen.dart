@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
+import 'package:zo_animated_border/zo_animated_border.dart';
 
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
@@ -19,13 +20,25 @@ class AnchorScreen extends StatelessWidget {
             alignment: Alignment.center,
             padding: const EdgeInsets.all(16),
             width: MediaQuery.of(context).size.width * 0.7,
-            child: Card(
-              margin: EdgeInsets.zero,
-              clipBehavior: Clip.antiAlias,
-              color: AppColors.cardBackground,
-              child: RiveAnimation.asset(
-                'assets/rives/jihye_anchor.riv',
-                fit: BoxFit.contain,
+            child: ZoBreathingBorder(
+              borderWidth: 2.0,
+              borderRadius: BorderRadius.circular(16),
+              colors: const [
+                Colors.lightBlueAccent,
+                Colors.blueAccent,
+                Colors.blue,
+              ],
+              child: Card(
+                margin: EdgeInsets.zero,
+                clipBehavior: Clip.antiAlias,
+                color: AppColors.cardBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const RiveAnimation.asset(
+                  'assets/rives/jihye_anchor.riv',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
