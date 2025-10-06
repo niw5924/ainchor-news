@@ -55,6 +55,19 @@ class AnchorScreen extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               color: AppColors.cardBackground,
               child: ListTile(
+                leading: ZoSignalBorder(
+                  maxRadius: 40,
+                  ringColors: const [
+                    Colors.lightBlueAccent,
+                    Colors.blueAccent,
+                    Colors.blue,
+                  ],
+                  animationDuration: const Duration(seconds: 10),
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.play_arrow),
+                  ),
+                ),
                 title: Text('${anchor.nameKo} (${anchor.nameEn})'),
                 subtitle: Text(anchor.voiceStyle),
               ),
