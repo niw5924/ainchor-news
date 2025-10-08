@@ -78,7 +78,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
             ),
           ),
         ),
-        Divider(color: AppColors.divider),
+        Divider(height: 3, thickness: 3, color: AppColors.divider),
         Flexible(
           flex: 1,
           child: Container(
