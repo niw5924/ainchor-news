@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
 import 'package:just_audio/just_audio.dart';
-
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 
@@ -16,16 +16,24 @@ class AnchorScreen extends StatefulWidget {
 class _AnchorScreenState extends State<AnchorScreen> {
   final _player = AudioPlayer();
   static const _assetPath = 'assets/audios/jihye_sample.mp3';
+  SMIInput<bool>? _isTalking;
+  StreamSubscription<PlayerState>? _playerSub;
 
   @override
   void initState() {
     super.initState();
     _player.setAsset(_assetPath);
+    _playerSub = _player.playerStateStream.listen((s) {
+      final completed = s.processingState == ProcessingState.completed;
+      final talking = s.playing && !completed;
+      _isTalking?.value = talking;
+    });
   }
 
   @override
   void dispose() {
     _player.dispose();
+    _playerSub?.cancel();
     super.dispose();
   }
 
@@ -40,6 +48,18 @@ class _AnchorScreenState extends State<AnchorScreen> {
       await _player.pause();
     } else {
       await _player.play();
+    }
+  }
+
+  void _onRiveInit(Artboard artboard) {
+    StateMachineController? controller;
+    controller = StateMachineController.fromArtboard(artboard, 'State Machine');
+    if (controller != null) {
+      artboard.addController(controller);
+      _isTalking = controller.findInput<bool>('isTalking');
+      final s = _player.playerState;
+      final completed = s.processingState == ProcessingState.completed;
+      _isTalking?.value = s.playing && !completed;
     }
   }
 
@@ -70,9 +90,10 @@ class _AnchorScreenState extends State<AnchorScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const RiveAnimation.asset(
+                child: RiveAnimation.asset(
                   'assets/rives/jihye_anchor.riv',
                   fit: BoxFit.contain,
+                  onInit: _onRiveInit,
                 ),
               ),
             ),
