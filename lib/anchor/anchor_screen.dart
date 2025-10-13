@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:card_swiper/card_swiper.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 
@@ -15,24 +16,28 @@ class AnchorScreen extends StatefulWidget {
 
 class _AnchorScreenState extends State<AnchorScreen> {
   final _player = AudioPlayer();
-  SMIInput<bool>? _isTalking;
+  final List<Anchor> _anchors = const [Anchor.jihye, Anchor.seoyeon];
+  int _currentIndex = 0;
+  final Map<int, SMIInput<bool>?> _talkInputs = {};
   StreamSubscription<PlayerState>? _playerSub;
+
+  SMIInput<bool>? get _currentTalking => _talkInputs[_currentIndex];
 
   @override
   void initState() {
     super.initState();
-    _player.setAsset(Anchor.jihye.audioPath);
+    _player.setAsset(_anchors[_currentIndex].audioPath);
     _playerSub = _player.playerStateStream.listen((s) {
       final completed = s.processingState == ProcessingState.completed;
       final talking = s.playing && !completed;
-      _isTalking?.value = talking;
+      _currentTalking?.value = talking;
     });
   }
 
   @override
   void dispose() {
-    _player.dispose();
     _playerSub?.cancel();
+    _player.dispose();
     super.dispose();
   }
 
@@ -50,24 +55,33 @@ class _AnchorScreenState extends State<AnchorScreen> {
     }
   }
 
-  void _onRiveInit(Artboard artboard) {
-    final controller = StateMachineController.fromArtboard(
-      artboard,
-      'State Machine',
-    );
-    if (controller != null) {
-      artboard.addController(controller);
-      _isTalking = controller.findInput<bool>('isTalking');
-      final s = _player.playerState;
-      final completed = s.processingState == ProcessingState.completed;
-      _isTalking?.value = s.playing && !completed;
-    }
+  void Function(Artboard) _onRiveInitFor(int index) {
+    return (Artboard artboard) {
+      final controller = StateMachineController.fromArtboard(
+        artboard,
+        'State Machine',
+      );
+      if (controller != null) {
+        artboard.addController(controller);
+        _talkInputs[index] = controller.findInput<bool>('isTalking');
+        _talkInputs[index]?.value = false;
+      }
+    };
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final anchor = Anchor.jihye;
+  Future<void> _onIndexChanged(int newIndex) async {
+    _talkInputs[_currentIndex]?.value = false;
+    if (_player.playing) {
+      await _player.pause();
+    }
+    _currentIndex = newIndex;
+    final newAnchor = _anchors[_currentIndex];
+    await _player.setAsset(newAnchor.audioPath);
+    _talkInputs[_currentIndex]?.value = false;
+  }
 
+  Widget _buildAnchorCard(BuildContext context, int index) {
+    final anchor = _anchors[index];
     return Column(
       children: [
         Flexible(
@@ -94,7 +108,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
                 child: RiveAnimation.asset(
                   anchor.rivePath,
                   fit: BoxFit.contain,
-                  onInit: _onRiveInit,
+                  onInit: _onRiveInitFor(index),
                 ),
               ),
             ),
@@ -141,6 +155,24 @@ class _AnchorScreenState extends State<AnchorScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Swiper(
+      itemCount: _anchors.length,
+      itemBuilder: _buildAnchorCard,
+      onIndexChanged: _onIndexChanged,
+      loop: false,
+      pagination: SwiperPagination(
+        builder: DotSwiperPaginationBuilder(
+          color: AppColors.primary.withValues(alpha: 0.2),
+          activeColor: AppColors.primary,
+          size: 6,
+          activeSize: 8,
+        ),
+      ),
     );
   }
 }
