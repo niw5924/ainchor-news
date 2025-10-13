@@ -15,14 +15,13 @@ class AnchorScreen extends StatefulWidget {
 
 class _AnchorScreenState extends State<AnchorScreen> {
   final _player = AudioPlayer();
-  static const _assetPath = 'assets/audios/jihye_sample.mp3';
   SMIInput<bool>? _isTalking;
   StreamSubscription<PlayerState>? _playerSub;
 
   @override
   void initState() {
     super.initState();
-    _player.setAsset(_assetPath);
+    _player.setAsset(Anchor.jihye.audioPath);
     _playerSub = _player.playerStateStream.listen((s) {
       final completed = s.processingState == ProcessingState.completed;
       final talking = s.playing && !completed;
@@ -52,8 +51,10 @@ class _AnchorScreenState extends State<AnchorScreen> {
   }
 
   void _onRiveInit(Artboard artboard) {
-    StateMachineController? controller;
-    controller = StateMachineController.fromArtboard(artboard, 'State Machine');
+    final controller = StateMachineController.fromArtboard(
+      artboard,
+      'State Machine',
+    );
     if (controller != null) {
       artboard.addController(controller);
       _isTalking = controller.findInput<bool>('isTalking');
@@ -91,7 +92,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: RiveAnimation.asset(
-                  'assets/rives/jihye_anchor.riv',
+                  anchor.rivePath,
                   fit: BoxFit.contain,
                   onInit: _onRiveInit,
                 ),
