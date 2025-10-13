@@ -43,6 +43,7 @@ dependencies:
   rive: ^0.13.20
   zo_animated_border: ^1.0.3
   just_audio: ^0.10.5
+  card_swiper: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -76,9 +77,9 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/audios/
     - assets/images/
     - assets/rives/
-    - assets/audios/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
