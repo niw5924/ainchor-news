@@ -82,81 +82,78 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Flexible(
-            flex: 2,
-            child: Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: ZoBreathingBorder(
-                borderWidth: 2.0,
-                borderRadius: BorderRadius.circular(16),
-                colors: const [
-                  Colors.lightBlueAccent,
-                  Colors.blueAccent,
-                  Colors.blue,
-                ],
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  clipBehavior: Clip.antiAlias,
-                  color: AppColors.cardBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: RiveAnimation.asset(
-                    anchor.rivePath,
-                    fit: BoxFit.contain,
-                    onInit: _onRiveInitFor(index),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width * 0.7,
+    return Column(
+      children: [
+        Flexible(
+          flex: 2,
+          child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: ZoBreathingBorder(
+              borderWidth: 2.0,
+              borderRadius: BorderRadius.circular(16),
+              colors: const [
+                Colors.lightBlueAccent,
+                Colors.blueAccent,
+                Colors.blue,
+              ],
               child: Card(
                 margin: EdgeInsets.zero,
                 clipBehavior: Clip.antiAlias,
                 color: AppColors.cardBackground,
-                child: ListTile(
-                  leading: ZoSignalBorder(
-                    maxRadius: 40,
-                    ringColors: const [
-                      Colors.lightBlueAccent,
-                      Colors.blueAccent,
-                      Colors.blue,
-                    ],
-                    animationDuration: const Duration(seconds: 10),
-                    child: StreamBuilder<PlayerState>(
-                      stream: _player.playerStateStream,
-                      builder: (context, snapshot) {
-                        final s = snapshot.data;
-                        final completed =
-                            s?.processingState == ProcessingState.completed;
-                        final showPause = (s?.playing == true) && !completed;
-                        return IconButton(
-                          onPressed: _togglePlay,
-                          icon: Icon(
-                            showPause ? Icons.pause : Icons.play_arrow,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  title: Text('${anchor.nameKo} (${anchor.nameEn})'),
-                  subtitle: Text(anchor.voiceStyle),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: RiveAnimation.asset(
+                  anchor.rivePath,
+                  fit: BoxFit.contain,
+                  onInit: _onRiveInitFor(index),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+        Flexible(
+          flex: 1,
+          child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: Card(
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              color: AppColors.cardBackground,
+              child: ListTile(
+                leading: ZoSignalBorder(
+                  maxRadius: 40,
+                  ringColors: const [
+                    Colors.lightBlueAccent,
+                    Colors.blueAccent,
+                    Colors.blue,
+                  ],
+                  animationDuration: const Duration(seconds: 10),
+                  child: StreamBuilder<PlayerState>(
+                    stream: _player.playerStateStream,
+                    builder: (context, snapshot) {
+                      final s = snapshot.data;
+                      final completed =
+                          s?.processingState == ProcessingState.completed;
+                      final showPause = (s?.playing == true) && !completed;
+                      return IconButton(
+                        onPressed: _togglePlay,
+                        icon: Icon(
+                          showPause ? Icons.pause : Icons.play_arrow,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                title: Text('${anchor.nameKo} (${anchor.nameEn})'),
+                subtitle: Text(anchor.voiceStyle),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
