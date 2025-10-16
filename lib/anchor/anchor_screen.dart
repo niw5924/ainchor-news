@@ -84,6 +84,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
     final anchor = _anchors[index];
     return Column(
       children: [
+        const SizedBox(height: 32),
         Flexible(
           flex: 2,
           child: Container(
@@ -205,14 +206,15 @@ class _AnchorScreenState extends State<AnchorScreen> {
       itemBuilder: _buildAnchorCard,
       onIndexChanged: _onIndexChanged,
       loop: false,
-      // pagination: SwiperPagination(
-      //   builder: DotSwiperPaginationBuilder(
-      //     color: AppColors.primary.withValues(alpha: 0.2),
-      //     activeColor: AppColors.primary,
-      //     size: 6,
-      //     activeSize: 8,
-      //   ),
-      // ),
+      pagination: SwiperPagination(
+        alignment: Alignment.topCenter,
+        builder: DotSwiperPaginationBuilder(
+          color: AppColors.primary.withValues(alpha: 0.2),
+          activeColor: AppColors.primary,
+          size: 6,
+          activeSize: 8,
+        ),
+      ),
     );
   }
 }
