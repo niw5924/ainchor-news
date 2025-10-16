@@ -113,11 +113,16 @@ class _AnchorScreenState extends State<AnchorScreen> {
             ),
           ),
         ),
+        const SizedBox(height: 48),
         Flexible(
           flex: 1,
           child: Container(
             alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width * 0.7,
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
             child: Card(
               margin: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
@@ -140,9 +145,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
                       final showPause = (s?.playing == true) && !completed;
                       return IconButton(
                         onPressed: _togglePlay,
-                        icon: Icon(
-                          showPause ? Icons.pause : Icons.play_arrow,
-                        ),
+                        icon: Icon(showPause ? Icons.pause : Icons.play_arrow),
                       );
                     },
                   ),
