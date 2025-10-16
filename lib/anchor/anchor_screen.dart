@@ -113,46 +113,84 @@ class _AnchorScreenState extends State<AnchorScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 48),
+        const SizedBox(height: 32),
         Flexible(
           flex: 1,
           child: Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width * 0.9,
+            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            child: Card(
-              margin: EdgeInsets.zero,
-              clipBehavior: Clip.antiAlias,
-              color: AppColors.cardBackground,
-              child: ListTile(
-                leading: ZoSignalBorder(
-                  maxRadius: 40,
-                  ringColors: const [
-                    Colors.lightBlueAccent,
-                    Colors.blueAccent,
-                    Colors.blue,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        clipBehavior: Clip.antiAlias,
+                        color: AppColors.cardBackground,
+                        child: ListTile(
+                          title: const Text('이름'),
+                          subtitle: Text('${anchor.nameKo} (${anchor.nameEn})'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Flexible(
+                      flex: 1,
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        clipBehavior: Clip.antiAlias,
+                        color: AppColors.cardBackground,
+                        child: ListTile(
+                          title: const Text('음성 스타일'),
+                          subtitle: Text(anchor.voiceStyle),
+                        ),
+                      ),
+                    ),
                   ],
-                  animationDuration: const Duration(seconds: 10),
-                  child: StreamBuilder<PlayerState>(
-                    stream: _player.playerStateStream,
-                    builder: (context, snapshot) {
-                      final s = snapshot.data;
-                      final completed =
-                          s?.processingState == ProcessingState.completed;
-                      final showPause = (s?.playing == true) && !completed;
-                      return IconButton(
-                        onPressed: _togglePlay,
-                        icon: Icon(showPause ? Icons.pause : Icons.play_arrow),
-                      );
-                    },
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  margin: EdgeInsets.zero,
+                  clipBehavior: Clip.antiAlias,
+                  color: AppColors.cardBackground,
+                  child: ListTile(
+                    leading: ZoSignalBorder(
+                      maxRadius: 40,
+                      ringColors: const [
+                        Colors.lightBlueAccent,
+                        Colors.blueAccent,
+                        Colors.blue,
+                      ],
+                      animationDuration: const Duration(seconds: 10),
+                      child: StreamBuilder<PlayerState>(
+                        stream: _player.playerStateStream,
+                        builder: (context, snapshot) {
+                          final s = snapshot.data;
+                          final completed =
+                              s?.processingState == ProcessingState.completed;
+                          final showPause = (s?.playing == true) && !completed;
+                          return IconButton(
+                            onPressed: _togglePlay,
+                            icon: Icon(
+                              showPause ? Icons.pause : Icons.play_arrow,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    title: const Text('샘플 음성'),
+                    subtitle: const Text('오프닝 인사말'),
                   ),
                 ),
-                title: Text('${anchor.nameKo} (${anchor.nameEn})'),
-                subtitle: Text(anchor.voiceStyle),
-              ),
+              ],
             ),
           ),
         ),
@@ -167,14 +205,14 @@ class _AnchorScreenState extends State<AnchorScreen> {
       itemBuilder: _buildAnchorCard,
       onIndexChanged: _onIndexChanged,
       loop: false,
-      pagination: SwiperPagination(
-        builder: DotSwiperPaginationBuilder(
-          color: AppColors.primary.withValues(alpha: 0.2),
-          activeColor: AppColors.primary,
-          size: 6,
-          activeSize: 8,
-        ),
-      ),
+      // pagination: SwiperPagination(
+      //   builder: DotSwiperPaginationBuilder(
+      //     color: AppColors.primary.withValues(alpha: 0.2),
+      //     activeColor: AppColors.primary,
+      //     size: 6,
+      //     activeSize: 8,
+      //   ),
+      // ),
     );
   }
 }
