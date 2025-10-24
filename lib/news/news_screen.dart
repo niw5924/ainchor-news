@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/app_colors.dart';
+import '../constants/news_action_enums.dart';
 import '../constants/news_category_enums.dart';
 import '../services/naver_news_service.dart';
 import '../utils/date_time_utils.dart';
 import '../utils/html_utils.dart';
+import 'news_action_dialog.dart';
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
@@ -90,7 +92,21 @@ class _NewsList extends StatelessWidget {
                     ),
                   ],
                 ),
-                onTap: () => launchUrl(Uri.parse(originallink)),
+                onTap: () async {
+                  final action = await showDialog<NewsAction>(
+                    context: context,
+                    builder: (_) => NewsActionDialog(title: title, host: host),
+                  );
+                  if (action == null) return;
+
+                  switch (action) {
+                    case NewsAction.listen:
+                      break;
+                    case NewsAction.read:
+                      await launchUrl(Uri.parse(originallink));
+                      break;
+                  }
+                },
               ),
             );
           },
