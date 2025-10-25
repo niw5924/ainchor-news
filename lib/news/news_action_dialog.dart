@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
@@ -50,7 +51,10 @@ class NewsActionDialog extends StatelessWidget {
                       NewsAction.listen => const Text('홍길동'),
                       NewsAction.read => Text(host),
                     },
-                    onTap: () => Navigator.of(context).pop(action),
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      Navigator.of(context).pop(action);
+                    },
                   ),
                 );
               },
