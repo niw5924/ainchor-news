@@ -21,8 +21,10 @@ class NewsScreen extends StatelessWidget {
       child: Column(
         children: [
           TabBar(
+            indicatorWeight: 3.0,
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorColor: AppColors.primary,
+            dividerColor: AppColors.divider,
             labelColor: AppColors.primary,
             unselectedLabelColor: AppColors.secondary,
             tabs: categories.map((c) => Tab(text: c.label)).toList(),
