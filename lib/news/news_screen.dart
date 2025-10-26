@@ -78,7 +78,14 @@ class _NewsList extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               color: AppColors.cardBackground,
               child: ListTile(
-                leading: _NewsLeading(host: host),
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                  foregroundColor: AppColors.primary,
+                  child: Text(
+                    host[0].toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
                 title: Text(title),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,23 +121,6 @@ class _NewsList extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class _NewsLeading extends StatelessWidget {
-  const _NewsLeading({required this.host});
-
-  final String host;
-
-  @override
-  Widget build(BuildContext context) {
-    final initial = host[0].toUpperCase();
-
-    return CircleAvatar(
-      backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-      foregroundColor: AppColors.primary,
-      child: Text(initial, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }
