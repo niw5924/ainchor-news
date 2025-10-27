@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:card_swiper/card_swiper.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
+import '../utils/anchor_preloader.dart';
 
 class AnchorScreen extends StatefulWidget {
   const AnchorScreen({super.key});
@@ -19,10 +20,10 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   final _player = AudioPlayer();
   int _currentIndex = 0;
-  final Map<int, SMIInput<bool>?> _talkInputs = {};
   StreamSubscription<PlayerState>? _playerSub;
 
-  SMIInput<bool>? get _currentTalking => _talkInputs[_currentIndex];
+  SMIInput<bool>? get _currentTalking =>
+      AnchorPreloader.instance.talkingInputs[_currentIndex];
 
   @override
   void initState() {
@@ -56,33 +57,20 @@ class _AnchorScreenState extends State<AnchorScreen> {
     }
   }
 
-  void Function(Artboard) _onRiveInitFor(int index) {
-    return (Artboard artboard) {
-      final controller = StateMachineController.fromArtboard(
-        artboard,
-        'State Machine',
-      );
-      if (controller != null) {
-        artboard.addController(controller);
-        _talkInputs[index] = controller.findInput<bool>('isTalking');
-        _talkInputs[index]?.value = false;
-      }
-    };
-  }
-
   Future<void> _onIndexChanged(int newIndex) async {
-    _talkInputs[_currentIndex]?.value = false;
+    _currentTalking?.value = false;
     if (_player.playing) {
       await _player.pause();
     }
     _currentIndex = newIndex;
     final newAnchor = _anchors[_currentIndex];
     await _player.setAsset(newAnchor.audioPath);
-    _talkInputs[_currentIndex]?.value = false;
+    _currentTalking?.value = false;
   }
 
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
+    final artboard = AnchorPreloader.instance.artboards[index]!;
     return Column(
       children: [
         const SizedBox(height: 32),
@@ -106,11 +94,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: RiveAnimation.asset(
-                  anchor.rivePath,
-                  fit: BoxFit.contain,
-                  onInit: _onRiveInitFor(index),
-                ),
+                child: Rive(artboard: artboard, fit: BoxFit.contain),
               ),
             ),
           ),
