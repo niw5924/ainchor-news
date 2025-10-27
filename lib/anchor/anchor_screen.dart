@@ -15,8 +15,9 @@ class AnchorScreen extends StatefulWidget {
 }
 
 class _AnchorScreenState extends State<AnchorScreen> {
+  List<Anchor> get _anchors => Anchor.values;
+
   final _player = AudioPlayer();
-  final List<Anchor> _anchors = const [Anchor.jihye, Anchor.seoyeon];
   int _currentIndex = 0;
   final Map<int, SMIInput<bool>?> _talkInputs = {};
   StreamSubscription<PlayerState>? _playerSub;
