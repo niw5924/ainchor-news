@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rive/rive.dart';
 import 'package:zo_animated_border/zo_animated_border.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
@@ -79,22 +81,34 @@ class _AnchorScreenState extends State<AnchorScreen> {
           child: Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width * 0.7,
-            child: ZoBreathingBorder(
-              borderWidth: 2.0,
-              borderRadius: BorderRadius.circular(16),
-              colors: const [
-                Colors.lightBlueAccent,
-                Colors.blueAccent,
-                Colors.blue,
-              ],
-              child: Card(
-                margin: EdgeInsets.zero,
-                clipBehavior: Clip.antiAlias,
-                color: AppColors.cardBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            child: ZoomTapAnimation(
+              begin: 1.0,
+              end: 0.9,
+              beginDuration: const Duration(milliseconds: 50),
+              endDuration: const Duration(milliseconds: 100),
+              beginCurve: Curves.easeOutCubic,
+              endCurve: Curves.fastOutSlowIn,
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                print('Anchor tapped: $anchor');
+              },
+              child: ZoBreathingBorder(
+                borderWidth: 2.0,
+                borderRadius: BorderRadius.circular(16),
+                colors: const [
+                  Colors.lightBlueAccent,
+                  Colors.blueAccent,
+                  Colors.blue,
+                ],
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  clipBehavior: Clip.antiAlias,
+                  color: AppColors.cardBackground,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Rive(artboard: artboard, fit: BoxFit.contain),
                 ),
-                child: Rive(artboard: artboard, fit: BoxFit.contain),
               ),
             ),
           ),
