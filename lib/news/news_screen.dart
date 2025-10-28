@@ -125,10 +125,11 @@ class _NewsListState extends State<_NewsList> {
                 item['description'],
               );
               final pubDate = DateTimeUtils.parsePubDateString(item['pubDate']);
-              final originallink = item['originallink'];
-              final host = Uri.parse(
-                originallink,
-              ).host.replaceFirst('www.', '');
+              final link =
+                  item['originallink'].isNotEmpty
+                      ? item['originallink']
+                      : item['link'];
+              final host = Uri.parse(link).host.replaceFirst('www.', '');
 
               return Card(
                 margin: EdgeInsets.zero,
@@ -170,7 +171,7 @@ class _NewsListState extends State<_NewsList> {
                       case NewsAction.listen:
                         break;
                       case NewsAction.read:
-                        await launchUrl(Uri.parse(originallink));
+                        await launchUrl(Uri.parse(link));
                         break;
                     }
                   },
