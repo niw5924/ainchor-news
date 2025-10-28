@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:toastification/toastification.dart';
 
 import 'app_router.dart';
 import 'utils/anchor_preloader.dart';
@@ -19,6 +20,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: appRouter, title: 'AInchor News');
+    return ToastificationWrapper(
+      child: MaterialApp.router(routerConfig: appRouter, title: 'AInchor News'),
+    );
   }
 }

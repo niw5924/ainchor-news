@@ -9,6 +9,7 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
+import '../utils/toast_utils.dart';
 
 class AnchorScreen extends StatefulWidget {
   const AnchorScreen({super.key});
@@ -90,7 +91,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
               endCurve: Curves.fastOutSlowIn,
               onTap: () {
                 HapticFeedback.mediumImpact();
-                print('Anchor tapped: $anchor');
+                ToastUtils.success("Anchor tapped: $anchor");
               },
               child: ZoBreathingBorder(
                 borderWidth: 2.0,
