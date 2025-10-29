@@ -5,12 +5,14 @@ import 'package:toastification/toastification.dart';
 
 import 'app_router.dart';
 import 'utils/anchor_preloader.dart';
+import 'utils/app_prefs.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   await initializeDateFormatting('en');
   await initializeDateFormatting('ko');
+  await AppPrefs.init();
   await AnchorPreloader.instance.preloadAllAnchors();
   runApp(const MyApp());
 }
