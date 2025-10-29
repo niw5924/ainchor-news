@@ -9,6 +9,7 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
+import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
 
 class AnchorScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class AnchorScreen extends StatefulWidget {
 
 class _AnchorScreenState extends State<AnchorScreen> {
   List<Anchor> get _anchors => Anchor.values;
+  String? _selectedName;
 
   final _player = AudioPlayer();
   int _currentIndex = 0;
@@ -31,6 +33,8 @@ class _AnchorScreenState extends State<AnchorScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedName = AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName);
+
     _player.setAsset(_anchors[_currentIndex].audioPath);
     _playerSub = _player.playerStateStream.listen((s) {
       final completed = s.processingState == ProcessingState.completed;
@@ -74,6 +78,15 @@ class _AnchorScreenState extends State<AnchorScreen> {
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
     final artboard = AnchorPreloader.instance.artboards[index]!;
+    final contentCard = Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      color: AppColors.cardBackground,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Rive(artboard: artboard, fit: BoxFit.contain),
+    );
+    final isSelected = _selectedName == anchor.name;
+
     return Column(
       children: [
         const SizedBox(height: 32),
@@ -89,28 +102,32 @@ class _AnchorScreenState extends State<AnchorScreen> {
               endDuration: const Duration(milliseconds: 100),
               beginCurve: Curves.easeOutCubic,
               endCurve: Curves.fastOutSlowIn,
-              onTap: () {
+              onTap: () async {
                 HapticFeedback.mediumImpact();
-                ToastUtils.success("Anchor tapped: $anchor");
+
+                final next = isSelected ? null : anchor.name;
+                if (next == null) {
+                  await AppPrefs.remove(AppPrefsKeys.selectedAnchorName);
+                  ToastUtils.success("${anchor.name}을(를) 나만의 앵커에서 해제했어요");
+                } else {
+                  await AppPrefs.set(AppPrefsKeys.selectedAnchorName, next);
+                  ToastUtils.success("${anchor.name}을(를) 나만의 앵커로 지정했어요");
+                }
+                setState(() => _selectedName = next);
               },
-              child: ZoBreathingBorder(
-                borderWidth: 2.0,
-                borderRadius: BorderRadius.circular(16),
-                colors: const [
-                  Colors.lightBlueAccent,
-                  Colors.blueAccent,
-                  Colors.blue,
-                ],
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  clipBehavior: Clip.antiAlias,
-                  color: AppColors.cardBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Rive(artboard: artboard, fit: BoxFit.contain),
-                ),
-              ),
+              child:
+                  isSelected
+                      ? ZoBreathingBorder(
+                        borderWidth: 2.0,
+                        borderRadius: BorderRadius.circular(16),
+                        colors: const [
+                          Colors.lightBlueAccent,
+                          Colors.blueAccent,
+                          Colors.blue,
+                        ],
+                        child: contentCard,
+                      )
+                      : contentCard,
             ),
           ),
         ),
