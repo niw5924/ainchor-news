@@ -138,7 +138,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
                         color: AppColors.cardBackground,
                         child: ListTile(
                           title: const Text('이름'),
-                          subtitle: Text('${anchor.nameKo} (${anchor.nameEn})'),
+                          subtitle: Text(anchor.name),
                         ),
                       ),
                     ),
