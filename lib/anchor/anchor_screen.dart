@@ -8,6 +8,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
+import '../main_screen.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
@@ -20,19 +21,31 @@ class AnchorScreen extends StatefulWidget {
 }
 
 class _AnchorScreenState extends State<AnchorScreen> {
+  late final VoidCallback _tabListener;
+
   List<Anchor> get _anchors => Anchor.values;
   String? _selectedName;
-
-  final _player = AudioPlayer();
   int _currentIndex = 0;
-  StreamSubscription<PlayerState>? _playerSub;
 
   SMIInput<bool>? get _currentTalking =>
       AnchorPreloader.instance.talkingInputs[_currentIndex];
 
+  final _player = AudioPlayer();
+  StreamSubscription<PlayerState>? _playerSub;
+
   @override
   void initState() {
     super.initState();
+
+    /// 탭 변경 시 처리 리스너(앵커 탭 이탈 시 재생 정지)
+    _tabListener = () {
+      if (shellIndex.value != 1) {
+        _currentTalking?.value = false;
+        if (_player.playing) _player.pause();
+      }
+    };
+    shellIndex.addListener(_tabListener);
+
     _selectedName = AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName);
 
     _player.setAsset(_anchors[_currentIndex].audioPath);
@@ -47,6 +60,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
   void dispose() {
     _playerSub?.cancel();
     _player.dispose();
+    shellIndex.removeListener(_tabListener);
     super.dispose();
   }
 
