@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
+import '../utils/app_prefs.dart';
 
 class NewsActionDialog extends StatelessWidget {
   const NewsActionDialog({super.key, required this.title, required this.host});
@@ -12,6 +13,9 @@ class NewsActionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedAnchorName =
+        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ?? '앵커 미설정';
+
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
       child: Padding(
@@ -48,7 +52,7 @@ class NewsActionDialog extends StatelessWidget {
                     leading: Icon(action.icon),
                     title: Text(action.label),
                     subtitle: switch (action) {
-                      NewsAction.listen => const Text('홍길동'),
+                      NewsAction.listen => Text(selectedAnchorName),
                       NewsAction.read => Text(host),
                     },
                     onTap: () {
