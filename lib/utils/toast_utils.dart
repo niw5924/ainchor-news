@@ -9,6 +9,7 @@ class ToastUtils {
       type: ToastificationType.success,
       style: ToastificationStyle.flat,
       title: Text(message),
+      closeOnClick: true,
     );
   }
 
@@ -19,6 +20,7 @@ class ToastUtils {
       type: ToastificationType.error,
       style: ToastificationStyle.flat,
       title: Text(message),
+      closeOnClick: true,
     );
   }
 }
