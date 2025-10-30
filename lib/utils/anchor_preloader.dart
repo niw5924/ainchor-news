@@ -2,9 +2,13 @@ import 'package:flutter/services.dart';
 import 'package:rive/rive.dart';
 import '../constants/anchor_enums.dart';
 
+/// 런타임 캐시 단일화·전역 오염 방지용 싱글턴(외부 생성 금지)
 class AnchorPreloader {
-  AnchorPreloader._(); // 외부 생성 금지
-  static final AnchorPreloader instance = AnchorPreloader._(); // 싱글턴 인스턴스
+  /// 외부 생성 금지
+  AnchorPreloader._();
+
+  /// 싱글턴 인스턴스
+  static final AnchorPreloader instance = AnchorPreloader._();
 
   final Map<int, Artboard> artboards = {};
   final Map<int, SMIInput<bool>> talkingInputs = {};

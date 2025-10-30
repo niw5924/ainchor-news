@@ -4,6 +4,7 @@ class AppPrefsKeys {
   static const selectedAnchorName = 'selectedAnchorName';
 }
 
+/// 정적 prefs 유틸: 인스턴스 생성 금지(오용 방지)
 class AppPrefs {
   AppPrefs._();
 
