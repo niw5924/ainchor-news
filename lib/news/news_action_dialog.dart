@@ -37,7 +37,9 @@ class NewsActionDialog extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
+            const Divider(color: AppColors.divider),
+            const SizedBox(height: 8),
             ListView.separated(
               shrinkWrap: true,
               separatorBuilder: (_, __) => const SizedBox(height: 16),
