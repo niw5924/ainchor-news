@@ -1,9 +1,13 @@
-import 'package:ainchor_news/models/naver_news_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../models/naver_news_model.dart';
+
 class NaverNewsService {
-  Future<List> fetchNews({required String query, required int start}) async {
+  Future<List<NaverNewsModel>> fetchNews({
+    required String query,
+    required int start,
+  }) async {
     final dio = Dio();
     final naverClientId = dotenv.env['NAVER_CLIENT_ID'];
     final naverClientSecret = dotenv.env['NAVER_CLIENT_SECRET'];

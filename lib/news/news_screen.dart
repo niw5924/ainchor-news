@@ -4,9 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
 import '../constants/news_category_enums.dart';
+import '../models/naver_news_model.dart';
 import '../services/naver_news_service.dart';
-import '../utils/date_time_utils.dart';
-import '../utils/html_utils.dart';
 import 'news_action_dialog.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -51,7 +50,7 @@ class _NewsList extends StatefulWidget {
 }
 
 class _NewsListState extends State<_NewsList> {
-  late Future<List> _future;
+  late Future<List<NaverNewsModel>> _future;
 
   @override
   void initState() {
@@ -59,12 +58,12 @@ class _NewsListState extends State<_NewsList> {
     _future = _fetchNews();
   }
 
-  Future<List> _fetchNews() =>
+  Future<List<NaverNewsModel>> _fetchNews() =>
       NaverNewsService().fetchNews(query: widget.query, start: 1);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List>(
+    return FutureBuilder<List<NaverNewsModel>>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -120,15 +119,10 @@ class _NewsListState extends State<_NewsList> {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              final title = HtmlUtils.parseHtmlString(item['title']);
-              final description = HtmlUtils.parseHtmlString(
-                item['description'],
-              );
-              final pubDate = DateTimeUtils.parsePubDateString(item['pubDate']);
-              final link =
-                  item['originallink'].isNotEmpty
-                      ? item['originallink']
-                      : item['link'];
+              final title = item.title;
+              final description = item.description;
+              final pubDate = item.pubDate;
+              final link = item.link;
               final host = Uri.parse(link).host.replaceFirst('www.', '');
 
               return Card(
@@ -140,7 +134,7 @@ class _NewsListState extends State<_NewsList> {
                     backgroundColor: AppColors.primary.withValues(alpha: 0.12),
                     foregroundColor: AppColors.primary,
                     child: Text(
-                      host[0].toUpperCase(),
+                      host.isNotEmpty ? host[0].toUpperCase() : '?',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
