@@ -72,17 +72,21 @@ class _NewsListState extends State<_NewsList> {
   Widget build(BuildContext context) => PagingListener<int, NaverNewsModel>(
     controller: _pagingController,
     builder:
-        (context, state, fetchNextPage) =>
-            PagedListView<int, NaverNewsModel>.separated(
-              state: state,
-              fetchNextPage: fetchNextPage,
-              padding: const EdgeInsets.all(16),
-              physics: const AlwaysScrollableScrollPhysics(),
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
-              builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
-                itemBuilder: (context, item, index) => _NewsTile(item: item),
-              ),
+        (context, state, fetchNextPage) => RefreshIndicator(
+          onRefresh: () async {
+            _pagingController.refresh();
+          },
+          child: PagedListView<int, NaverNewsModel>.separated(
+            state: state,
+            fetchNextPage: fetchNextPage,
+            padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(),
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
+            builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
+              itemBuilder: (context, item, index) => _NewsTile(item: item),
             ),
+          ),
+        ),
   );
 }
 
