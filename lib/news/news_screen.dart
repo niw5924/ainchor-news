@@ -50,13 +50,11 @@ class _NewsList extends StatefulWidget {
 }
 
 class _NewsListState extends State<_NewsList> {
-  static const _pageSize = 10;
-
   late final _pagingController = PagingController<int, NaverNewsModel>(
     getNextPageKey:
         (state) => state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async {
-      final start = (pageKey - 1) * _pageSize + 1;
+      final start = (pageKey - 1) * naverNewsPageSize + 1;
       if (start > 1000) return <NaverNewsModel>[];
       return NaverNewsService().fetchNews(query: widget.query, start: start);
     },

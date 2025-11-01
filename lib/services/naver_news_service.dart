@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/naver_news_model.dart';
 
+const int naverNewsPageSize = 10;
+
 class NaverNewsService {
   Future<List<NaverNewsModel>> fetchNews({
     required String query,
@@ -16,7 +18,7 @@ class NaverNewsService {
       'https://openapi.naver.com/v1/search/news.json',
       queryParameters: {
         'query': query,
-        'display': 10,
+        'display': naverNewsPageSize,
         'start': start,
         'sort': 'sim',
       },
