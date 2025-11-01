@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/app_colors.dart';
@@ -14,7 +15,6 @@ class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = NewsCategory.values;
-
     return DefaultTabController(
       length: categories.length,
       child: Column(
@@ -50,131 +50,96 @@ class _NewsList extends StatefulWidget {
 }
 
 class _NewsListState extends State<_NewsList> {
-  late Future<List<NaverNewsModel>> _future;
+  static const _pageSize = 10;
+
+  late final _pagingController = PagingController<int, NaverNewsModel>(
+    getNextPageKey:
+        (state) => state.lastPageIsEmpty ? null : state.nextIntPageKey,
+    fetchPage: (pageKey) async {
+      final start = (pageKey - 1) * _pageSize + 1;
+      if (start > 1000) return <NaverNewsModel>[];
+      return NaverNewsService().fetchNews(query: widget.query, start: start);
+    },
+  );
 
   @override
-  void initState() {
-    super.initState();
-    _future = _fetchNews();
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 
-  Future<List<NaverNewsModel>> _fetchNews() =>
-      NaverNewsService().fetchNews(query: widget.query, start: 1);
+  @override
+  Widget build(BuildContext context) => PagingListener<int, NaverNewsModel>(
+    controller: _pagingController,
+    builder:
+        (context, state, fetchNextPage) =>
+            PagedListView<int, NaverNewsModel>.separated(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              padding: const EdgeInsets.all(16),
+              physics: const AlwaysScrollableScrollPhysics(),
+              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
+                itemBuilder: (context, item, index) => _NewsTile(item: item),
+              ),
+            ),
+  );
+}
+
+class _NewsTile extends StatelessWidget {
+  const _NewsTile({required this.item});
+
+  final NaverNewsModel item;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<NaverNewsModel>>(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('${snapshot.error}'),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _future = _fetchNews();
-                    });
-                  },
-                  child: const Text('새로고침'),
-                ),
-              ],
-            ),
-          );
-        }
-        final items = snapshot.data!;
-        if (items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('표시할 뉴스가 없습니다.'),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _future = _fetchNews();
-                    });
-                  },
-                  child: const Text('새로고침'),
-                ),
-              ],
-            ),
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              _future = _fetchNews();
-            });
-          },
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            separatorBuilder: (_, __) => const SizedBox(height: 16),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final title = item.title;
-              final description = item.description;
-              final pubDate = item.pubDate;
-              final link = item.link;
-              final host = Uri.parse(link).host.replaceFirst('www.', '');
+    final title = item.title;
+    final description = item.description;
+    final pubDate = item.pubDate;
+    final link = item.link;
+    final host = Uri.parse(link).host.replaceFirst('www.', '');
 
-              return Card(
-                margin: EdgeInsets.zero,
-                clipBehavior: Clip.antiAlias,
-                color: AppColors.cardBackground,
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-                    foregroundColor: AppColors.primary,
-                    child: Text(
-                      host.isNotEmpty ? host[0].toUpperCase() : '?',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  title: Text(title),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(description),
-                      const SizedBox(height: 4),
-                      Text(pubDate),
-                      Text(
-                        host,
-                        style: const TextStyle(
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
-                  ),
-                  onTap: () async {
-                    final action = await showDialog<NewsAction>(
-                      context: context,
-                      builder:
-                          (_) => NewsActionDialog(title: title, host: host),
-                    );
-                    if (action == null) return;
-
-                    switch (action) {
-                      case NewsAction.listen:
-                        break;
-                      case NewsAction.read:
-                        await launchUrl(Uri.parse(link));
-                        break;
-                    }
-                  },
-                ),
-              );
-            },
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      color: AppColors.cardBackground,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+          foregroundColor: AppColors.primary,
+          child: Text(
+            host.isNotEmpty ? host[0].toUpperCase() : '?',
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-        );
-      },
+        ),
+        title: Text(title),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(description),
+            const SizedBox(height: 4),
+            Text(pubDate),
+            Text(
+              host,
+              style: const TextStyle(decoration: TextDecoration.underline),
+            ),
+          ],
+        ),
+        onTap: () async {
+          final action = await showDialog<NewsAction>(
+            context: context,
+            builder: (_) => NewsActionDialog(title: title, host: host),
+          );
+          if (action == null) return;
+          switch (action) {
+            case NewsAction.listen:
+              break;
+            case NewsAction.read:
+              await launchUrl(Uri.parse(link));
+              break;
+          }
+        },
+      ),
     );
   }
 }
