@@ -60,7 +60,7 @@ class _NewsListState extends State<_NewsList> {
   }
 
   Future<List> _fetchNews() =>
-      NaverNewsService().fetchNews(query: widget.query);
+      NaverNewsService().fetchNews(query: widget.query, start: 1);
 
   @override
   Widget build(BuildContext context) {
