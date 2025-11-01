@@ -32,7 +32,7 @@ class NaverNewsService {
       throw Exception('HTTP ${response.statusCode}: ${response.data}');
     }
 
-    final items = response.data['items'];
-    return items.map((e) => NaverNewsModel.fromJson(e)).toList();
+    final items = List<Map<String, dynamic>>.from(response.data['items']);
+    return items.map(NaverNewsModel.fromJson).toList();
   }
 }
