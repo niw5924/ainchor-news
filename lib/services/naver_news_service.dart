@@ -1,3 +1,4 @@
+import 'package:ainchor_news/models/naver_news_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -27,6 +28,7 @@ class NaverNewsService {
       throw Exception('HTTP ${response.statusCode}: ${response.data}');
     }
 
-    return response.data['items'];
+    final items = response.data['items'];
+    return items.map((e) => NaverNewsModel.fromJson(e)).toList();
   }
 }
