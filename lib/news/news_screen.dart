@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:readability/readability.dart' as readability;
 
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
@@ -135,6 +136,8 @@ class _NewsTile extends StatelessWidget {
           if (action == null) return;
           switch (action) {
             case NewsAction.listen:
+              final article = await readability.parseAsync(link);
+              debugPrint(article.textContent);
               break;
             case NewsAction.read:
               await launchUrl(Uri.parse(link));
