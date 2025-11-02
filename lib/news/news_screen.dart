@@ -8,6 +8,8 @@ import '../constants/news_action_enums.dart';
 import '../constants/news_category_enums.dart';
 import '../models/naver_news_model.dart';
 import '../services/naver_news_service.dart';
+import '../utils/app_prefs.dart';
+import '../utils/toast_utils.dart';
 import 'news_action_dialog.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -136,6 +138,13 @@ class _NewsTile extends StatelessWidget {
           if (action == null) return;
           switch (action) {
             case NewsAction.listen:
+              final anchorName = AppPrefs.get<String>(
+                AppPrefsKeys.selectedAnchorName,
+              );
+              if (anchorName == null) {
+                ToastUtils.error('앵커를 먼저 설정해 주세요.');
+                break;
+              }
               final article = await readability.parseAsync(link);
               debugPrint(article.textContent);
               break;
