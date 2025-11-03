@@ -1,3 +1,4 @@
+import 'package:ainchor_news/api/brief_tts_api.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -138,15 +139,20 @@ class _NewsTile extends StatelessWidget {
           if (action == null) return;
           switch (action) {
             case NewsAction.listen:
-              final anchorName = AppPrefs.get<String>(
-                AppPrefsKeys.selectedAnchorName,
-              );
-              if (anchorName == null) {
-                ToastUtils.error('앵커를 먼저 설정해 주세요.');
-                break;
+              try {
+                final anchorName = AppPrefs.get<String>(
+                  AppPrefsKeys.selectedAnchorName,
+                );
+                if (anchorName == null) {
+                  ToastUtils.error('앵커를 먼저 설정해 주세요.');
+                  break;
+                }
+                final article = await readability.parseAsync(link);
+                final res = await BriefTtsApi.convert(article.textContent!);
+                ToastUtils.success(res['success'].toString());
+              } catch (e) {
+                ToastUtils.error(e.toString());
               }
-              final article = await readability.parseAsync(link);
-              debugPrint(article.textContent);
               break;
             case NewsAction.read:
               await launchUrl(Uri.parse(link));
