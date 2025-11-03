@@ -153,7 +153,7 @@ class _NewsTile extends StatelessWidget {
                   ToastUtils.error('본문이 비어있습니다.');
                   break;
                 }
-                final res = await BriefTtsApi.convert(text);
+                final res = await BriefTtsApi.convert(text: text);
                 ToastUtils.success(res['success'].toString());
               } catch (e) {
                 ToastUtils.error(e.toString());
