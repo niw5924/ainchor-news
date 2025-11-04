@@ -157,6 +157,7 @@ class _NewsTile extends StatelessWidget {
                   anchorName: anchorName,
                   text: text,
                 );
+                print(res['message']);
                 ToastUtils.success(res['success'].toString());
               } catch (e) {
                 ToastUtils.error(e.toString());
