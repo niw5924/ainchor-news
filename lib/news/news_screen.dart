@@ -160,7 +160,7 @@ class _NewsTile extends StatelessWidget {
                   anchorName: anchorName,
                   text: text,
                 );
-                final summary = res['message'];
+                final summary = res['summary'];
                 if (summary == null || summary.isEmpty) {
                   ToastUtils.error('요약 결과가 없습니다.');
                   break;
@@ -168,7 +168,11 @@ class _NewsTile extends StatelessWidget {
 
                 await showDialog(
                   context: context,
-                  builder: (_) => BriefTtsDialog(summary: summary),
+                  builder:
+                      (_) => BriefTtsDialog(
+                        anchorName: res['anchorName'],
+                        summary: summary,
+                      ),
                 );
               } catch (e) {
                 ToastUtils.error(e.toString());
