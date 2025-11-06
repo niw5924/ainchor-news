@@ -1,9 +1,7 @@
-import 'package:ainchor_news/api/brief_tts_api.dart';
 import 'package:ainchor_news/news/brief_tts_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:readability/readability.dart' as readability;
 
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
@@ -140,43 +138,18 @@ class _NewsTile extends StatelessWidget {
           if (action == null) return;
           switch (action) {
             case NewsAction.listen:
-              try {
-                final anchorName = AppPrefs.get<String>(
-                  AppPrefsKeys.selectedAnchorName,
-                );
-                if (anchorName == null) {
-                  ToastUtils.error('앵커를 먼저 설정해 주세요.');
-                  break;
-                }
-
-                final article = await readability.parseAsync(link);
-                final text = article.textContent;
-                if (text == null || text.isEmpty) {
-                  ToastUtils.error('본문이 비어있습니다.');
-                  break;
-                }
-
-                final res = await BriefTtsApi.convert(
-                  anchorName: anchorName,
-                  text: text,
-                );
-                final summary = res['summary'];
-                if (summary == null || summary.isEmpty) {
-                  ToastUtils.error('요약 결과가 없습니다.');
-                  break;
-                }
-
-                await showDialog(
-                  context: context,
-                  builder:
-                      (_) => BriefTtsDialog(
-                        anchorName: res['anchorName'],
-                        summary: summary,
-                      ),
-                );
-              } catch (e) {
-                ToastUtils.error(e.toString());
+              final anchorName = AppPrefs.get<String>(
+                AppPrefsKeys.selectedAnchorName,
+              );
+              if (anchorName == null) {
+                ToastUtils.error('앵커를 먼저 설정해 주세요.');
+                break;
               }
+              await showDialog(
+                context: context,
+                builder:
+                    (_) => BriefTtsDialog(anchorName: anchorName, link: link),
+              );
               break;
             case NewsAction.read:
               await launchUrl(Uri.parse(link));
