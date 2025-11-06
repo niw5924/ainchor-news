@@ -145,8 +145,10 @@ class _NewsTile extends StatelessWidget {
                 ToastUtils.error('앵커를 먼저 설정해 주세요.');
                 break;
               }
+
               await showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder:
                     (_) => BriefTtsDialog(anchorName: anchorName, link: link),
               );

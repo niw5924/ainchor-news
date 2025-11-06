@@ -62,24 +62,32 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: AppColors.scaffoldBackground,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children:
-              converting
-                  ? const [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 12),
-                    Text('변환 중입니다.'),
-                  ]
-                  : [
-                    Text(widget.anchorName),
-                    const SizedBox(height: 12),
-                    Text(summary),
-                  ],
+    return PopScope(
+      canPop: !converting,
+      child: Dialog(
+        backgroundColor: AppColors.scaffoldBackground,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+                converting
+                    ? const [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 12),
+                      Text('변환 중입니다.'),
+                    ]
+                    : [
+                      Text(widget.anchorName),
+                      const SizedBox(height: 12),
+                      Text(summary),
+                      const SizedBox(height: 12),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('닫기'),
+                      ),
+                    ],
+          ),
         ),
       ),
     );
