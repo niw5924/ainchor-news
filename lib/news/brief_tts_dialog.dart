@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:readability/readability.dart' as readability;
+import 'package:rive/rive.dart';
 
 import '../api/brief_tts_api.dart';
+import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
+import '../utils/anchor_preloader.dart';
 import '../utils/toast_utils.dart';
 
 class BriefTtsDialog extends StatefulWidget {
@@ -62,6 +65,11 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final anchorIndex = Anchor.values.indexWhere(
+      (a) => a.name == widget.anchorName,
+    );
+    final artboard = AnchorPreloader.instance.artboards[anchorIndex]!;
+
     return PopScope(
       canPop: !converting,
       child: Dialog(
@@ -78,7 +86,27 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                       Text('변환 중입니다.'),
                     ]
                     : [
-                      Text(widget.anchorName),
+                      Card(
+                        margin: EdgeInsets.zero,
+                        clipBehavior: Clip.antiAlias,
+                        color: AppColors.cardBackground,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          child: Rive(artboard: artboard, fit: BoxFit.contain),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        widget.anchorName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Text(summary),
                       const SizedBox(height: 12),
