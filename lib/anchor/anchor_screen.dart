@@ -12,6 +12,7 @@ import '../main_screen.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
+import '../widgets/anchor_card.dart';
 
 class AnchorScreen extends StatefulWidget {
   const AnchorScreen({super.key});
@@ -92,138 +93,126 @@ class _AnchorScreenState extends State<AnchorScreen> {
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
     final artboard = AnchorPreloader.instance.artboards[index]!;
-    final contentCard = Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      color: AppColors.cardBackground,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Rive(artboard: artboard, fit: BoxFit.contain),
+    final contentCard = AnchorCard(
+      width: MediaQuery.of(context).size.width * 0.7,
+      height: MediaQuery.of(context).size.height * 0.45,
+      artboard: artboard,
     );
     final isSelected = _selectedName == anchor.name;
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(height: 32),
-        Flexible(
-          flex: 2,
-          child: Container(
-            alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: ZoomTapAnimation(
-              begin: 1.0,
-              end: 0.9,
-              beginDuration: const Duration(milliseconds: 50),
-              endDuration: const Duration(milliseconds: 100),
-              beginCurve: Curves.easeOutCubic,
-              endCurve: Curves.fastOutSlowIn,
-              onTap: () async {
-                HapticFeedback.mediumImpact();
+        const SizedBox(height: 16),
+        ZoomTapAnimation(
+          begin: 1.0,
+          end: 0.9,
+          beginDuration: const Duration(milliseconds: 50),
+          endDuration: const Duration(milliseconds: 100),
+          beginCurve: Curves.easeOutCubic,
+          endCurve: Curves.fastOutSlowIn,
+          onTap: () async {
+            HapticFeedback.mediumImpact();
 
-                final next = isSelected ? null : anchor.name;
-                if (next == null) {
-                  await AppPrefs.remove(AppPrefsKeys.selectedAnchorName);
-                  ToastUtils.success("${anchor.name}을(를) 나만의 앵커에서 해제했어요");
-                } else {
-                  await AppPrefs.set(AppPrefsKeys.selectedAnchorName, next);
-                  ToastUtils.success("${anchor.name}을(를) 나만의 앵커로 지정했어요");
-                }
-                setState(() => _selectedName = next);
-              },
-              child:
-                  isSelected
-                      ? ZoBreathingBorder(
-                        borderWidth: 2.0,
-                        borderRadius: BorderRadius.circular(16),
-                        colors: const [
-                          Colors.lightBlueAccent,
-                          Colors.blueAccent,
-                          Colors.blue,
-                        ],
-                        child: contentCard,
-                      )
-                      : contentCard,
-            ),
-          ),
+            final next = isSelected ? null : anchor.name;
+            if (next == null) {
+              await AppPrefs.remove(AppPrefsKeys.selectedAnchorName);
+              ToastUtils.success("${anchor.name}을(를) 나만의 앵커에서 해제했어요");
+            } else {
+              await AppPrefs.set(AppPrefsKeys.selectedAnchorName, next);
+              ToastUtils.success("${anchor.name}을(를) 나만의 앵커로 지정했어요");
+            }
+            setState(() => _selectedName = next);
+          },
+          child:
+              isSelected
+                  ? ZoBreathingBorder(
+                    borderWidth: 2.0,
+                    borderRadius: BorderRadius.circular(16),
+                    colors: const [
+                      Colors.lightBlueAccent,
+                      Colors.blueAccent,
+                      Colors.blue,
+                    ],
+                    child: contentCard,
+                  )
+                  : contentCard,
         ),
-        const SizedBox(height: 32),
-        Flexible(
-          flex: 1,
-          child: Container(
-            alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width * 0.9,
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        color: AppColors.cardBackground,
-                        child: ListTile(
-                          title: const Text('이름'),
-                          subtitle: Text(anchor.name),
-                        ),
+        Container(
+          alignment: Alignment.center,
+          width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      color: AppColors.cardBackground,
+                      child: ListTile(
+                        title: const Text('이름'),
+                        subtitle: Text(anchor.name),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Flexible(
-                      flex: 1,
-                      child: Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        color: AppColors.cardBackground,
-                        child: ListTile(
-                          title: const Text('음성 스타일'),
-                          subtitle: Text(anchor.voiceStyle),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  margin: EdgeInsets.zero,
-                  clipBehavior: Clip.antiAlias,
-                  color: AppColors.cardBackground,
-                  child: ListTile(
-                    leading: ZoSignalBorder(
-                      maxRadius: 40,
-                      ringColors: const [
-                        Colors.lightBlueAccent,
-                        Colors.blueAccent,
-                        Colors.blue,
-                      ],
-                      animationDuration: const Duration(seconds: 10),
-                      child: StreamBuilder<PlayerState>(
-                        stream: _player.playerStateStream,
-                        builder: (context, snapshot) {
-                          final s = snapshot.data;
-                          final completed =
-                              s?.processingState == ProcessingState.completed;
-                          final showPause = (s?.playing == true) && !completed;
-                          return IconButton(
-                            onPressed: _togglePlay,
-                            icon: Icon(
-                              showPause ? Icons.pause : Icons.play_arrow,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    title: const Text('샘플 음성'),
-                    subtitle: const Text('오프닝 인사말'),
                   ),
+                  const SizedBox(width: 16),
+                  Flexible(
+                    flex: 1,
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      color: AppColors.cardBackground,
+                      child: ListTile(
+                        title: const Text('음성 스타일'),
+                        subtitle: Text(anchor.voiceStyle),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Card(
+                margin: EdgeInsets.zero,
+                clipBehavior: Clip.antiAlias,
+                color: AppColors.cardBackground,
+                child: ListTile(
+                  leading: ZoSignalBorder(
+                    maxRadius: 40,
+                    ringColors: const [
+                      Colors.lightBlueAccent,
+                      Colors.blueAccent,
+                      Colors.blue,
+                    ],
+                    animationDuration: const Duration(seconds: 10),
+                    child: StreamBuilder<PlayerState>(
+                      stream: _player.playerStateStream,
+                      builder: (context, snapshot) {
+                        final s = snapshot.data;
+                        final completed =
+                            s?.processingState == ProcessingState.completed;
+                        final showPause = (s?.playing == true) && !completed;
+                        return IconButton(
+                          onPressed: _togglePlay,
+                          icon: Icon(
+                            showPause ? Icons.pause : Icons.play_arrow,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  title: const Text('샘플 음성'),
+                  subtitle: const Text('오프닝 인사말'),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],

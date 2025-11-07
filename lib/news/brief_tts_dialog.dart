@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:readability/readability.dart' as readability;
-import 'package:rive/rive.dart';
 
 import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/toast_utils.dart';
+import '../widgets/anchor_card.dart';
 
 class BriefTtsDialog extends StatefulWidget {
   const BriefTtsDialog({
@@ -86,18 +86,10 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                       Text('변환 중입니다.'),
                     ]
                     : [
-                      Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        color: AppColors.cardBackground,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          child: Rive(artboard: artboard, fit: BoxFit.contain),
-                        ),
+                      AnchorCard(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        artboard: artboard,
                       ),
                       const SizedBox(height: 12),
                       Text(
