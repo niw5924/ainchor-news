@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:readability/readability.dart' as readability;
+import 'package:just_audio/just_audio.dart';
 
 import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
@@ -25,6 +26,7 @@ class BriefTtsDialog extends StatefulWidget {
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
   bool converting = true;
   String summary = '';
+  final _player = AudioPlayer();
 
   @override
   void initState() {
@@ -42,25 +44,36 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
         return;
       }
 
-      final res = await BriefTtsApi.convert(
-        anchorName: widget.anchorName,
-        text: text,
-      );
-      final summary = res['summary'];
-      if (summary == null || summary.isEmpty) {
+      final sumRes = await BriefTtsApi.summary(text: text);
+      final summarized = sumRes['summary'];
+      if (summarized == null || summarized.isEmpty) {
         ToastUtils.error('요약 결과가 없습니다.');
         Navigator.of(context).pop();
         return;
       }
 
       setState(() {
-        this.summary = summary;
+        summary = summarized;
         converting = false;
       });
+
+      final bytes = await BriefTtsApi.tts(
+        anchorName: widget.anchorName,
+        summary: summarized,
+      );
+      final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
+      await _player.setUrl(uri.toString());
+      await _player.play();
     } catch (e) {
       ToastUtils.error(e.toString());
       Navigator.of(context).pop();
     }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
