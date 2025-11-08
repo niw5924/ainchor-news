@@ -74,39 +74,48 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
       canPop: !converting,
       child: Dialog(
         backgroundColor: AppColors.scaffoldBackground,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children:
-                converting
-                    ? const [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 12),
-                      Text('변환 중입니다.'),
-                    ]
-                    : [
-                      AnchorCard(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        artboard: artboard,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        widget.anchorName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  converting
+                      ? const [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 12),
+                        Text('변환 중입니다.'),
+                      ]
+                      : [
+                        AnchorCard(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          artboard: artboard,
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(summary),
-                      const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('닫기'),
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+                        Text(
+                          widget.anchorName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Flexible(
+                          child: Scrollbar(
+                            child: SingleChildScrollView(child: Text(summary)),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('닫기'),
+                        ),
+                      ],
+            ),
           ),
         ),
       ),
