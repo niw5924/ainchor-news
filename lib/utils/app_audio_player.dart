@@ -2,9 +2,10 @@ import 'package:just_audio/just_audio.dart';
 
 class AppAudioPlayer {
   AppAudioPlayer._() {
-    _player.playerStateStream.listen((s) {
+    _player.playerStateStream.listen((s) async {
       if (s.processingState == ProcessingState.completed) {
-        _player.stop();
+        await _player.seek(Duration.zero);
+        await _player.pause();
       }
     });
   }
