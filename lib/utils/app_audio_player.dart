@@ -4,7 +4,7 @@ class AppAudioPlayer {
   AppAudioPlayer._() {
     _player.playerStateStream.listen((s) {
       if (s.processingState == ProcessingState.completed) {
-        _player.seek(Duration.zero);
+        _player.stop();
       }
     });
   }
@@ -20,12 +20,4 @@ class AppAudioPlayer {
   Future<void> play() => _player.play();
 
   Future<void> pause() => _player.pause();
-
-  Future<void> toggle() async {
-    if (playing) {
-      await pause();
-    } else {
-      await play();
-    }
-  }
 }
