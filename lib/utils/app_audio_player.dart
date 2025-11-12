@@ -22,6 +22,8 @@ class AppAudioPlayer {
 
   Future<void> setAsset(String path) => _player.setAsset(path);
 
+  Future<void> setUrl(String url) => _player.setUrl(url);
+
   Future<void> play() async {
     playing.value = true;
     await _player.play();

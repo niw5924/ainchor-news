@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:readability/readability.dart' as readability;
-import 'package:just_audio/just_audio.dart';
 
 import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
@@ -8,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
+import '../utils/app_audio_player.dart';
 
 class BriefTtsDialog extends StatefulWidget {
   const BriefTtsDialog({
@@ -26,7 +26,6 @@ class BriefTtsDialog extends StatefulWidget {
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
   bool converting = true;
   String summary = '';
-  final _player = AudioPlayer();
 
   @override
   void initState() {
@@ -62,8 +61,9 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
         summary: summarized,
       );
       final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
-      await _player.setUrl(uri.toString());
-      await _player.play();
+      await AppAudioPlayer.instance.pause();
+      await AppAudioPlayer.instance.setUrl(uri.toString());
+      await AppAudioPlayer.instance.play();
     } catch (e) {
       ToastUtils.error(e.toString());
       Navigator.of(context).pop();
@@ -72,7 +72,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
 
   @override
   void dispose() {
-    _player.dispose();
+    AppAudioPlayer.instance.pause();
     super.dispose();
   }
 
@@ -124,7 +124,10 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                         ),
                         const SizedBox(height: 12),
                         TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            AppAudioPlayer.instance.pause();
+                            Navigator.of(context).pop();
+                          },
                           child: const Text('닫기'),
                         ),
                       ],
