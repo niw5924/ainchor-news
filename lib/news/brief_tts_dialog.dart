@@ -5,9 +5,7 @@ import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
-import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
-import '../utils/app_audio_player.dart';
 
 class BriefTtsDialog extends StatefulWidget {
   const BriefTtsDialog({
@@ -24,58 +22,6 @@ class BriefTtsDialog extends StatefulWidget {
 }
 
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
-  bool converting = true;
-  String summary = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _convert();
-  }
-
-  Future<void> _convert() async {
-    try {
-      final article = await readability.parseAsync(widget.link);
-      final text = article.textContent;
-      if (text == null || text.isEmpty) {
-        ToastUtils.error('본문이 비어있습니다.');
-        Navigator.of(context).pop();
-        return;
-      }
-
-      final sumRes = await BriefTtsApi.summary(text: text);
-      final summarized = sumRes['summary'];
-      if (summarized == null || summarized.isEmpty) {
-        ToastUtils.error('요약 결과가 없습니다.');
-        Navigator.of(context).pop();
-        return;
-      }
-
-      setState(() {
-        summary = summarized;
-        converting = false;
-      });
-
-      final bytes = await BriefTtsApi.tts(
-        anchorName: widget.anchorName,
-        summary: summarized,
-      );
-      final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
-      await AppAudioPlayer.instance.pause();
-      await AppAudioPlayer.instance.setUrl(uri.toString());
-      await AppAudioPlayer.instance.play();
-    } catch (e) {
-      ToastUtils.error(e.toString());
-      Navigator.of(context).pop();
-    }
-  }
-
-  @override
-  void dispose() {
-    AppAudioPlayer.instance.pause();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final anchorIndex = Anchor.values.indexWhere(
@@ -83,55 +29,70 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
     );
     final artboard = AnchorPreloader.instance.artboards[anchorIndex]!;
 
-    return PopScope(
-      canPop: !converting,
-      child: Dialog(
-        backgroundColor: AppColors.scaffoldBackground,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children:
-                  converting
-                      ? const [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 12),
-                        Text('변환 중입니다.'),
-                      ]
-                      : [
-                        AnchorCard(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          artboard: artboard,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          widget.anchorName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Flexible(
-                          child: Scrollbar(
-                            child: SingleChildScrollView(child: Text(summary)),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {
-                            AppAudioPlayer.instance.pause();
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('닫기'),
-                        ),
-                      ],
-            ),
+    return Dialog(
+      backgroundColor: AppColors.scaffoldBackground,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: FutureBuilder<String>(
+            future: Future<String>(() async {
+              final article = await readability.parseAsync(widget.link);
+              final text = article.textContent;
+              if (text == null || text.isEmpty) {
+                throw Exception('본문이 비어있습니다.');
+              }
+
+              final sumRes = await BriefTtsApi.summary(text: text);
+              final summarized = sumRes['summary'];
+              if (summarized == null || summarized.isEmpty) {
+                throw Exception('요약 결과가 없습니다.');
+              }
+
+              return summarized;
+            }),
+            builder: (context, snap) {
+              if (snap.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snap.hasError) {
+                return Center(child: Text('${snap.error}'));
+              }
+
+              final summary = snap.data!;
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnchorCard(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    artboard: artboard,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.anchorName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Flexible(
+                    child: Scrollbar(
+                      child: SingleChildScrollView(child: Text(summary)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('닫기'),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
