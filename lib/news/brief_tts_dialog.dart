@@ -6,6 +6,7 @@ import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
 import '../widgets/anchor_card.dart';
+import '../utils/app_audio_player.dart';
 
 class BriefTtsDialog extends StatefulWidget {
   const BriefTtsDialog({
@@ -22,6 +23,12 @@ class BriefTtsDialog extends StatefulWidget {
 }
 
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
+  @override
+  void dispose() {
+    AppAudioPlayer.instance.pause();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final anchorIndex = Anchor.values.indexWhere(
@@ -44,15 +51,27 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
               if (text == null || text.isEmpty) {
                 throw Exception('본문이 비어있습니다.');
               }
-
               final sumRes = await BriefTtsApi.summary(text: text);
               final summarized = sumRes['summary'];
               if (summarized == null || summarized.isEmpty) {
                 throw Exception('요약 결과가 없습니다.');
               }
-
               return summarized;
-            }),
+            })..then(
+              (summary) async {
+                final bytes = await BriefTtsApi.tts(
+                  anchorName: widget.anchorName,
+                  summary: summary,
+                );
+                final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
+                await AppAudioPlayer.instance.pause();
+                await AppAudioPlayer.instance.setUrl(uri.toString());
+                await AppAudioPlayer.instance.play();
+              },
+              onError: (e) {
+                print(e);
+              },
+            ),
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
