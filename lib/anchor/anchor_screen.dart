@@ -1,16 +1,20 @@
+import 'dart:async';
+
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rive/rive.dart';
-import 'package:zo_animated_border/zo_animated_border.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+import 'package:zo_animated_border/zo_animated_border.dart';
+
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
+import '../main_screen.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
-import '../utils/app_audio_player.dart';
 
 class AnchorScreen extends StatefulWidget {
   const AnchorScreen({super.key});
@@ -20,9 +24,15 @@ class AnchorScreen extends StatefulWidget {
 }
 
 class _AnchorScreenState extends State<AnchorScreen> {
-  List<Anchor> get _anchors => Anchor.values;
+  late final AudioPlayer _anchorTabAudio;
+  late final StreamSubscription<PlayerState> _anchorTabAudioSub;
+  late final VoidCallback _tabListener;
+
+  bool _isPlaying = false;
   String? _selectedName;
   int _currentIndex = 0;
+
+  List<Anchor> get _anchors => Anchor.values;
 
   SMIInput<bool>? get _currentTalking =>
       AnchorPreloader.instance.talkingInputs[_currentIndex];
@@ -30,28 +40,58 @@ class _AnchorScreenState extends State<AnchorScreen> {
   @override
   void initState() {
     super.initState();
+
+    _anchorTabAudio = AudioPlayer();
+    _anchorTabAudioSub = _anchorTabAudio.playerStateStream.listen((s) {
+      final completed = s.processingState == ProcessingState.completed;
+      final talking = s.playing && !completed;
+      setState(() {
+        _isPlaying = talking;
+      });
+      _currentTalking?.value = talking;
+    });
+
+    _tabListener = () {
+      if (shellIndex.value != 1) {
+        _anchorTabAudio.pause();
+        _currentTalking?.value = false;
+      }
+    };
+    shellIndex.addListener(_tabListener);
+
     _selectedName = AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName);
-    AppAudioPlayer.instance.setAsset(_anchors[_currentIndex].audioPath);
+    _anchorTabAudio.setAsset(_anchors[_currentIndex].audioPath);
+  }
+
+  @override
+  void dispose() {
+    _currentTalking?.value = false;
+    shellIndex.removeListener(_tabListener);
+    _anchorTabAudioSub.cancel();
+    _anchorTabAudio.dispose();
+    super.dispose();
   }
 
   Future<void> _togglePlay() async {
-    final talking = _currentTalking?.value == true;
-    if (talking) {
-      _currentTalking?.value = false;
-      await AppAudioPlayer.instance.pause();
+    final s = _anchorTabAudio.playerState;
+    if (s.processingState == ProcessingState.completed) {
+      await _anchorTabAudio.seek(Duration.zero);
+      await _anchorTabAudio.play();
+      return;
+    }
+    if (s.playing) {
+      await _anchorTabAudio.pause();
     } else {
-      _currentTalking?.value = true;
-      await AppAudioPlayer.instance.play();
+      await _anchorTabAudio.play();
     }
   }
 
   Future<void> _onIndexChanged(int newIndex) async {
+    await _anchorTabAudio.pause();
     _currentTalking?.value = false;
-    await AppAudioPlayer.instance.pause();
     _currentIndex = newIndex;
     final newAnchor = _anchors[_currentIndex];
-    await AppAudioPlayer.instance.setAsset(newAnchor.audioPath);
-    _currentTalking?.value = false;
+    await _anchorTabAudio.setAsset(newAnchor.audioPath);
   }
 
   Widget _buildAnchorCard(BuildContext context, int index) {
@@ -63,6 +103,8 @@ class _AnchorScreenState extends State<AnchorScreen> {
       artboard: artboard,
     );
     final isSelected = _selectedName == anchor.name;
+    final isActive = index == _currentIndex;
+    final showPause = isActive && _isPlaying;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,21 +197,9 @@ class _AnchorScreenState extends State<AnchorScreen> {
                       Colors.blue,
                     ],
                     animationDuration: const Duration(seconds: 10),
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: AppAudioPlayer.instance.playing,
-                      builder: (context, playing, _) {
-                        final isActive = index == _currentIndex;
-                        final showPause = isActive && playing;
-                        final input =
-                            AnchorPreloader.instance.talkingInputs[index];
-                        input?.value = isActive ? playing : false;
-                        return IconButton(
-                          onPressed: _togglePlay,
-                          icon: Icon(
-                            showPause ? Icons.pause : Icons.play_arrow,
-                          ),
-                        );
-                      },
+                    child: IconButton(
+                      onPressed: _togglePlay,
+                      icon: Icon(showPause ? Icons.pause : Icons.play_arrow),
                     ),
                   ),
                   title: const Text('샘플 음성'),
