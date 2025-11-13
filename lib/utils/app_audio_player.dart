@@ -5,9 +5,8 @@ class AppAudioPlayer {
   AppAudioPlayer._() {
     _player.playerStateStream.listen((s) async {
       if (s.processingState == ProcessingState.completed) {
-        playing.value = false;
         await _player.seek(Duration.zero);
-        await _player.pause();
+        await pause();
       } else {
         playing.value = _player.playing;
       }
@@ -20,9 +19,13 @@ class AppAudioPlayer {
 
   final ValueNotifier<bool> playing = ValueNotifier<bool>(false);
 
-  Future<void> setAsset(String path) => _player.setAsset(path);
+  Future<void> setAsset(String path) async {
+    await _player.setAsset(path);
+  }
 
-  Future<void> setUrl(String url) => _player.setUrl(url);
+  Future<void> setUrl(String url) async {
+    await _player.setUrl(url);
+  }
 
   Future<void> play() async {
     playing.value = true;
