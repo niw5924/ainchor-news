@@ -6,7 +6,6 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
-import '../main_screen.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
@@ -21,8 +20,6 @@ class AnchorScreen extends StatefulWidget {
 }
 
 class _AnchorScreenState extends State<AnchorScreen> {
-  late final VoidCallback _tabListener;
-
   List<Anchor> get _anchors => Anchor.values;
   String? _selectedName;
   int _currentIndex = 0;
@@ -33,23 +30,8 @@ class _AnchorScreenState extends State<AnchorScreen> {
   @override
   void initState() {
     super.initState();
-
-    /// 탭 변경 시 처리 리스너(앵커 탭 이탈 시 재생 정지)
-    _tabListener = () {
-      if (shellIndex.value != 1) {
-        _currentTalking?.value = false;
-        AppAudioPlayer.instance.pause();
-      }
-    };
-    shellIndex.addListener(_tabListener);
     _selectedName = AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName);
     AppAudioPlayer.instance.setAsset(_anchors[_currentIndex].audioPath);
-  }
-
-  @override
-  void dispose() {
-    shellIndex.removeListener(_tabListener);
-    super.dispose();
   }
 
   Future<void> _togglePlay() async {

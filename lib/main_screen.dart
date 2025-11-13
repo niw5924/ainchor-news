@@ -3,10 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import 'constants/app_colors.dart';
 
-/// 현재 탭 인덱스 브로드캐스트(탭 변경 알림)
-/// 이유: IndexedStack이 dispose를 안 해서 비활성 탭에서도 재생이 계속됨 → 탭 전환 신호로 즉시 pause하기 위함
-final ValueNotifier<int> shellIndex = ValueNotifier<int>(0);
-
 class MainScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -31,7 +27,6 @@ class MainScreen extends StatelessWidget {
         indicatorColor: AppColors.primary,
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: (i) {
-          shellIndex.value = i;
           navigationShell.goBranch(i);
         },
         destinations: const [
