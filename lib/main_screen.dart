@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'constants/app_colors.dart';
+import 'utils/anchor_preloader.dart';
+import 'utils/app_audio_player.dart';
 
 class MainScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -26,7 +28,11 @@ class MainScreen extends StatelessWidget {
         backgroundColor: AppColors.bottomNavBackground,
         indicatorColor: AppColors.primary,
         selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (i) {
+        onDestinationSelected: (i) async {
+          for (final input in AnchorPreloader.instance.talkingInputs.values) {
+            input.value = false;
+          }
+          await AppAudioPlayer.instance.pause();
           navigationShell.goBranch(i);
         },
         destinations: const [
