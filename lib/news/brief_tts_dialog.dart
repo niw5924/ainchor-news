@@ -55,7 +55,6 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
 
   @override
   void dispose() {
-    _talking = false;
     _briefTtsAudioSub.cancel();
     _briefTtsAudio.dispose();
     super.dispose();
