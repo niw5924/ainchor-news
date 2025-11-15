@@ -28,18 +28,27 @@ class _AnchorScreenState extends State<AnchorScreen> {
   late final StreamSubscription<PlayerState> _anchorTabAudioSub;
   late final VoidCallback _tabListener;
 
+  final List<Artboard> _artboards = [];
+  final List<SMIInput<bool>> _talkingInputs = [];
+
   bool _isPlaying = false;
   String? _selectedName;
   int _currentIndex = 0;
 
   List<Anchor> get _anchors => Anchor.values;
 
-  SMIInput<bool>? get _currentTalking =>
-      AnchorPreloader.instance.talkingInputs[_currentIndex];
+  set _currentTalking(bool value) =>
+      _talkingInputs[_currentIndex].value = value;
 
   @override
   void initState() {
     super.initState();
+
+    for (int i = 0; i < _anchors.length; i++) {
+      final instance = AnchorRiveUtils.createInstance(i);
+      _artboards.add(instance.artboard);
+      _talkingInputs.add(instance.talkingInput);
+    }
 
     _anchorTabAudio = AudioPlayer();
     _anchorTabAudioSub = _anchorTabAudio.playerStateStream.listen((s) {
@@ -48,13 +57,13 @@ class _AnchorScreenState extends State<AnchorScreen> {
       setState(() {
         _isPlaying = talking;
       });
-      _currentTalking?.value = talking;
+      _currentTalking = talking;
     });
 
     _tabListener = () {
       if (shellIndex.value != 1) {
         _anchorTabAudio.pause();
-        _currentTalking?.value = false;
+        _currentTalking = false;
       }
     };
     shellIndex.addListener(_tabListener);
@@ -65,7 +74,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   @override
   void dispose() {
-    _currentTalking?.value = false;
+    _currentTalking = false;
     shellIndex.removeListener(_tabListener);
     _anchorTabAudioSub.cancel();
     _anchorTabAudio.dispose();
@@ -88,7 +97,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   Future<void> _onIndexChanged(int newIndex) async {
     await _anchorTabAudio.pause();
-    _currentTalking?.value = false;
+    _currentTalking = false;
     _currentIndex = newIndex;
     final newAnchor = _anchors[_currentIndex];
     await _anchorTabAudio.setAsset(newAnchor.audioPath);
@@ -96,7 +105,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
-    final artboard = AnchorPreloader.instance.artboards[index]!;
+    final artboard = _artboards[index];
     final contentCard = AnchorCard(
       width: MediaQuery.of(context).size.width * 0.7,
       height: MediaQuery.of(context).size.height * 0.45,

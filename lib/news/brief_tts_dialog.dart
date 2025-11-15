@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:readability/readability.dart' as readability;
+import 'package:rive/rive.dart';
 
 import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
@@ -25,11 +26,18 @@ class BriefTtsDialog extends StatefulWidget {
 
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
   late final AudioPlayer _briefTtsAudio;
+  late final Artboard _artboard;
 
   @override
   void initState() {
     super.initState();
     _briefTtsAudio = AudioPlayer();
+
+    final anchorIndex = Anchor.values.indexWhere(
+      (a) => a.name == widget.anchorName,
+    );
+    final instance = AnchorRiveUtils.createInstance(anchorIndex);
+    _artboard = instance.artboard;
   }
 
   @override
@@ -40,11 +48,6 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final anchorIndex = Anchor.values.indexWhere(
-      (a) => a.name == widget.anchorName,
-    );
-    final artboard = AnchorPreloader.instance.artboards[anchorIndex]!;
-
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
       child: ConstrainedBox(
@@ -97,7 +100,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                   AnchorCard(
                     width: MediaQuery.of(context).size.width * 0.5,
                     height: MediaQuery.of(context).size.height * 0.3,
-                    artboard: artboard,
+                    artboard: _artboard,
                   ),
                   const SizedBox(height: 12),
                   Text(

@@ -13,7 +13,7 @@ Future<void> main() async {
   await initializeDateFormatting('en');
   await initializeDateFormatting('ko');
   await AppPrefs.init();
-  await AnchorPreloader.instance.preloadAllAnchors();
+  await AnchorRiveUtils.preloadAllAnchors();
   runApp(const MyApp());
 }
 
