@@ -16,4 +16,18 @@ class AnchorPreloader {
       riveFiles[index] = riveFile;
     }
   }
+
+  static ({Artboard artboard, SMIInput<bool> talkingInput}) createInstance(
+    int index,
+  ) {
+    final riveFile = riveFiles[index]!;
+    final artboard = riveFile.mainArtboard.instance();
+    final controller =
+        StateMachineController.fromArtboard(artboard, 'State Machine')!;
+    artboard.addController(controller);
+    final talkingInput = controller.findInput<bool>('isTalking')!;
+    talkingInput.value = false;
+
+    return (artboard: artboard, talkingInput: talkingInput);
+  }
 }
