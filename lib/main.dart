@@ -4,7 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:toastification/toastification.dart';
 
 import 'app_router.dart';
-import 'utils/anchor_preloader.dart';
+import 'utils/anchor_rive_utils.dart';
 import 'utils/app_prefs.dart';
 
 Future<void> main() async {

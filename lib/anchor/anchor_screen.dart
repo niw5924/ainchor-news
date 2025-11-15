@@ -11,7 +11,7 @@ import 'package:zo_animated_border/zo_animated_border.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../main_screen.dart';
-import '../utils/anchor_preloader.dart';
+import '../utils/anchor_rive_utils.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';

@@ -3,7 +3,7 @@ import 'package:rive/rive.dart';
 
 import '../constants/anchor_enums.dart';
 
-class AnchorPreloader {
+class AnchorRiveUtils {
   static final Map<int, RiveFile> riveFiles = {};
 
   static Future<void> preloadAllAnchors() async {

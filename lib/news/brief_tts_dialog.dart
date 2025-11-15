@@ -5,7 +5,7 @@ import 'package:readability/readability.dart' as readability;
 import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
-import '../utils/anchor_preloader.dart';
+import '../utils/anchor_rive_utils.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
 
