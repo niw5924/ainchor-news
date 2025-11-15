@@ -31,7 +31,6 @@ class _AnchorScreenState extends State<AnchorScreen> {
   final List<Artboard> _artboards = [];
   final List<SMIInput<bool>> _talkingInputs = [];
 
-  bool _isPlaying = false;
   String? _selectedName;
   int _currentIndex = 0;
 
@@ -55,15 +54,13 @@ class _AnchorScreenState extends State<AnchorScreen> {
       final completed = s.processingState == ProcessingState.completed;
       final talking = s.playing && !completed;
       setState(() {
-        _isPlaying = talking;
+        _currentTalking = talking;
       });
-      _currentTalking = talking;
     });
 
     _tabListener = () {
       if (shellIndex.value != 1) {
         _anchorTabAudio.pause();
-        _currentTalking = false;
       }
     };
     shellIndex.addListener(_tabListener);
@@ -74,7 +71,6 @@ class _AnchorScreenState extends State<AnchorScreen> {
 
   @override
   void dispose() {
-    _currentTalking = false;
     shellIndex.removeListener(_tabListener);
     _anchorTabAudioSub.cancel();
     _anchorTabAudio.dispose();
@@ -113,7 +109,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
     );
     final isSelected = _selectedName == anchor.name;
     final isActive = index == _currentIndex;
-    final showPause = isActive && _isPlaying;
+    final showPause = isActive && _talkingInputs[index].value;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
