@@ -5,6 +5,7 @@ import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
+import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
 import '../utils/app_audio_player.dart';
 
@@ -57,8 +58,8 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                 throw Exception('요약 결과가 없습니다.');
               }
               return summarized;
-            })..then(
-              (summary) async {
+            })..then((summary) async {
+              try {
                 final bytes = await BriefTtsApi.tts(
                   anchorName: widget.anchorName,
                   summary: summary,
@@ -67,11 +68,10 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                 await AppAudioPlayer.instance.pause();
                 await AppAudioPlayer.instance.setUrl(uri.toString());
                 await AppAudioPlayer.instance.play();
-              },
-              onError: (e) {
-                print(e);
-              },
-            ),
+              } catch (e) {
+                ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
+              }
+            }),
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
