@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:readability/readability.dart' as readability;
@@ -26,22 +28,35 @@ class BriefTtsDialog extends StatefulWidget {
 
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
   late final AudioPlayer _briefTtsAudio;
+  late final StreamSubscription<PlayerState> _briefTtsAudioSub;
   late final Artboard _artboard;
+  late final SMIInput<bool> _talkingInput;
+
+  set _talking(bool value) => _talkingInput.value = value;
 
   @override
   void initState() {
     super.initState();
-    _briefTtsAudio = AudioPlayer();
 
     final anchorIndex = Anchor.values.indexWhere(
       (a) => a.name == widget.anchorName,
     );
     final instance = AnchorRiveUtils.createInstance(anchorIndex);
     _artboard = instance.artboard;
+    _talkingInput = instance.talkingInput;
+
+    _briefTtsAudio = AudioPlayer();
+    _briefTtsAudioSub = _briefTtsAudio.playerStateStream.listen((s) {
+      final completed = s.processingState == ProcessingState.completed;
+      final talking = s.playing && !completed;
+      _talking = talking;
+    });
   }
 
   @override
   void dispose() {
+    _talking = false;
+    _briefTtsAudioSub.cancel();
     _briefTtsAudio.dispose();
     super.dispose();
   }
