@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:readability/readability.dart' as readability;
 
 import '../api/brief_tts_api.dart';
@@ -7,7 +8,6 @@ import '../constants/app_colors.dart';
 import '../utils/anchor_preloader.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
-import '../utils/app_audio_player.dart';
 
 class BriefTtsDialog extends StatefulWidget {
   const BriefTtsDialog({
@@ -24,9 +24,17 @@ class BriefTtsDialog extends StatefulWidget {
 }
 
 class _BriefTtsDialogState extends State<BriefTtsDialog> {
+  late final AudioPlayer _briefTtsAudio;
+
+  @override
+  void initState() {
+    super.initState();
+    _briefTtsAudio = AudioPlayer();
+  }
+
   @override
   void dispose() {
-    AppAudioPlayer.instance.pause();
+    _briefTtsAudio.dispose();
     super.dispose();
   }
 
@@ -52,11 +60,13 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
               if (text == null || text.isEmpty) {
                 throw Exception('본문이 비어있습니다.');
               }
+
               final sumRes = await BriefTtsApi.summary(text: text);
               final summarized = sumRes['summary'];
               if (summarized == null || summarized.isEmpty) {
                 throw Exception('요약 결과가 없습니다.');
               }
+
               return summarized;
             })..then((summary) async {
               try {
@@ -65,9 +75,8 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                   summary: summary,
                 );
                 final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
-                await AppAudioPlayer.instance.pause();
-                await AppAudioPlayer.instance.setUrl(uri.toString());
-                await AppAudioPlayer.instance.play();
+                await _briefTtsAudio.setUrl(uri.toString());
+                await _briefTtsAudio.play();
               } catch (e) {
                 ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
               }
