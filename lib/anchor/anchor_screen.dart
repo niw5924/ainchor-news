@@ -23,7 +23,8 @@ class AnchorScreen extends StatefulWidget {
   State<AnchorScreen> createState() => _AnchorScreenState();
 }
 
-class _AnchorScreenState extends State<AnchorScreen> {
+class _AnchorScreenState extends State<AnchorScreen>
+    with WidgetsBindingObserver {
   late final AudioPlayer _anchorTabAudio;
   late final StreamSubscription<PlayerState> _anchorTabAudioSub;
   late final VoidCallback _tabListener;
@@ -42,6 +43,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     for (int i = 0; i < _anchors.length; i++) {
       final instance = AnchorRiveUtils.createInstance(i);
@@ -70,7 +72,17 @@ class _AnchorScreenState extends State<AnchorScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _anchorTabAudio.pause();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     shellIndex.removeListener(_tabListener);
     _anchorTabAudioSub.cancel();
     _anchorTabAudio.dispose();
