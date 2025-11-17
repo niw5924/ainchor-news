@@ -215,6 +215,8 @@ class _AnchorScreenState extends State<AnchorScreen> {
       itemBuilder: _buildAnchorCard,
       onIndexChanged: _onIndexChanged,
       loop: false,
+      scale: 0.8,
+      fade: 0.8,
       pagination: SwiperPagination(
         alignment: Alignment.topCenter,
         builder: DotSwiperPaginationBuilder(
