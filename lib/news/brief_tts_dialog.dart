@@ -115,6 +115,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
                     width: MediaQuery.of(context).size.width * 0.5,
                     height: MediaQuery.of(context).size.height * 0.3,
                     artboard: _artboard,
+                    isSelected: false,
                   ),
                   const SizedBox(height: 12),
                   Text(

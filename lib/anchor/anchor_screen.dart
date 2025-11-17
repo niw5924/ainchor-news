@@ -102,14 +102,16 @@ class _AnchorScreenState extends State<AnchorScreen> {
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
     final artboard = _artboards[index];
+    final isSelected = _selectedName == anchor.name;
+    final isActive = index == _currentIndex;
+    final showPause = isActive && _talkingInputs[index].value;
+
     final contentCard = AnchorCard(
       width: MediaQuery.of(context).size.width * 0.7,
       height: MediaQuery.of(context).size.height * 0.45,
       artboard: artboard,
+      isSelected: isSelected,
     );
-    final isSelected = _selectedName == anchor.name;
-    final isActive = index == _currentIndex;
-    final showPause = isActive && _talkingInputs[index].value;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,19 +136,7 @@ class _AnchorScreenState extends State<AnchorScreen> {
             }
             setState(() => _selectedName = next);
           },
-          child:
-              isSelected
-                  ? ZoBreathingBorder(
-                    borderWidth: 2.0,
-                    borderRadius: BorderRadius.circular(16),
-                    colors: const [
-                      Colors.lightBlueAccent,
-                      Colors.blueAccent,
-                      Colors.blue,
-                    ],
-                    child: contentCard,
-                  )
-                  : contentCard,
+          child: contentCard,
         ),
         Container(
           alignment: Alignment.center,
