@@ -26,7 +26,8 @@ class BriefTtsDialog extends StatefulWidget {
   State<BriefTtsDialog> createState() => _BriefTtsDialogState();
 }
 
-class _BriefTtsDialogState extends State<BriefTtsDialog> {
+class _BriefTtsDialogState extends State<BriefTtsDialog>
+    with WidgetsBindingObserver {
   late final AudioPlayer _briefTtsAudio;
   late final StreamSubscription<PlayerState> _briefTtsAudioSub;
   late final Artboard _artboard;
@@ -37,6 +38,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     final anchorIndex = Anchor.values.indexWhere(
       (a) => a.name == widget.anchorName,
@@ -54,7 +56,18 @@ class _BriefTtsDialogState extends State<BriefTtsDialog> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _briefTtsAudio.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      _briefTtsAudio.play();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _briefTtsAudioSub.cancel();
     _briefTtsAudio.dispose();
     super.dispose();
