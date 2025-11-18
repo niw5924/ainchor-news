@@ -12,6 +12,10 @@ class AinchorListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: title, subtitle: subtitle);
+    return ListTile(
+      title: title,
+      subtitle: subtitle,
+      trailing: const Icon(Icons.chevron_right),
+    );
   }
 }
