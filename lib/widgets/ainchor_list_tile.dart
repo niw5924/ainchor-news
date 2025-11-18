@@ -4,12 +4,12 @@ class AinchorListTile extends StatelessWidget {
   const AinchorListTile({
     super.key,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     this.onTap,
   });
 
   final Widget title;
-  final Widget subtitle;
+  final Widget? subtitle;
   final VoidCallback? onTap;
 
   @override
