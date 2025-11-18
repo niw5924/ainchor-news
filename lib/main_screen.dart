@@ -19,6 +19,7 @@ class MainScreen extends StatelessWidget {
         title: Text(switch (navigationShell.currentIndex) {
           0 => '뉴스 피드',
           1 => '카드를 눌러 앵커를 선택할 수 있어요',
+          2 => '설정',
           _ => 'AInchor News',
         }, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
         centerTitle: true,
@@ -43,6 +44,7 @@ class MainScreen extends StatelessWidget {
             icon: Icon(Icons.record_voice_over_outlined),
             label: '앵커',
           ),
+          NavigationDestination(icon: Icon(Icons.settings), label: '설정'),
         ],
       ),
     );

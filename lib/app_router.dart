@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'anchor/anchor_screen.dart';
 import 'main_screen.dart';
 import 'news/news_screen.dart';
+import 'settings/settings_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/news',
@@ -27,6 +28,15 @@ final GoRouter appRouter = GoRouter(
               path: '/anchor',
               name: 'anchor',
               builder: (context, state) => const AnchorScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/settings',
+              name: 'settings',
+              builder: (context, state) => const SettingsScreen(),
             ),
           ],
         ),
