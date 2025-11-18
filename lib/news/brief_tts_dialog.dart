@@ -113,7 +113,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
             }),
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: LinearProgressIndicator());
               }
 
               if (snap.hasError) {
