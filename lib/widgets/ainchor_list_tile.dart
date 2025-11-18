@@ -5,11 +5,13 @@ class AinchorListTile extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
+    this.showTrailing = true,
     this.onTap,
   });
 
   final Widget title;
   final Widget? subtitle;
+  final bool showTrailing;
   final VoidCallback? onTap;
 
   @override
@@ -17,7 +19,7 @@ class AinchorListTile extends StatelessWidget {
     return ListTile(
       title: title,
       subtitle: subtitle,
-      trailing: const Icon(Icons.chevron_right),
+      trailing: showTrailing ? const Icon(Icons.chevron_right) : null,
       onTap: onTap,
     );
   }

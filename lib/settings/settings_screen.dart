@@ -18,7 +18,11 @@ class SettingsScreen extends StatelessWidget {
         const Divider(color: AppColors.divider),
         const AinchorListTile(title: Text("뉴스 길이"), subtitle: Text("4줄")),
         const Divider(color: AppColors.divider),
-        const AinchorListTile(title: Text("뉴스 길이"), subtitle: Text("5줄")),
+        const AinchorListTile(
+          title: Text("뉴스 길이"),
+          subtitle: Text("5줄"),
+          showTrailing: false,
+        ),
         const Divider(color: AppColors.divider),
         AinchorListTile(
           title: const Text("오픈소스 라이선스"),
