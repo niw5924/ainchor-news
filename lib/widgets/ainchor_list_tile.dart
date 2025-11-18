@@ -5,10 +5,12 @@ class AinchorListTile extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
+    this.onTap,
   });
 
   final Widget title;
   final Widget subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,7 @@ class AinchorListTile extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
     );
   }
 }
