@@ -131,12 +131,12 @@ class _NewsTile extends StatelessWidget {
           ],
         ),
         onTap: () async {
-          final action = await showDialog<NewsAction>(
+          final newsAction = await showDialog<NewsAction>(
             context: context,
             builder: (_) => NewsActionDialog(title: title, host: host),
           );
-          if (action == null) return;
-          switch (action) {
+          if (newsAction == null) return;
+          switch (newsAction) {
             case NewsAction.listen:
               final anchorName = AppPrefs.get<String>(
                 AppPrefsKeys.selectedAnchorName,

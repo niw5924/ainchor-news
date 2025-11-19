@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
-import '../constants/news_action_enums.dart';
+import '../constants/news_summary_sentence_enums.dart';
 import '../utils/app_prefs.dart';
 
-class NewsActionDialog extends StatelessWidget {
-  const NewsActionDialog({super.key, required this.title, required this.host});
-
-  final String title;
-  final String host;
+class NewsSummarySentenceDialog extends StatelessWidget {
+  const NewsSummarySentenceDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final selectedAnchorName =
-        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ?? '앵커 미설정';
+    final newsSummarySentenceCount =
+        AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ?? 5;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
@@ -24,7 +21,7 @@ class NewsActionDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              title,
+              '뉴스 요약 분량',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -43,23 +40,30 @@ class NewsActionDialog extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               separatorBuilder: (_, __) => const SizedBox(height: 16),
-              itemCount: NewsAction.values.length,
+              itemCount: NewsSummarySentence.values.length,
               itemBuilder: (context, index) {
-                final newsAction = NewsAction.values[index];
+                final newsSummarySentence = NewsSummarySentence.values[index];
+                final isSelected =
+                    newsSummarySentence.sentenceCount ==
+                    newsSummarySentenceCount;
+
                 return Card(
                   margin: EdgeInsets.zero,
                   clipBehavior: Clip.antiAlias,
                   color: AppColors.cardBackground,
                   child: ListTile(
-                    leading: Icon(newsAction.icon),
-                    title: Text(newsAction.label),
-                    subtitle: switch (newsAction) {
-                      NewsAction.listen => Text(selectedAnchorName),
-                      NewsAction.read => Text(host),
-                    },
+                    title: Text(newsSummarySentence.label),
+                    subtitle: Text('${newsSummarySentence.sentenceCount}문장'),
+                    trailing:
+                        isSelected
+                            ? const Icon(
+                              Icons.check_rounded,
+                              color: AppColors.primary,
+                            )
+                            : null,
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      Navigator.of(context).pop(newsAction);
+                      Navigator.of(context).pop(newsSummarySentence);
                     },
                   ),
                 );
