@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPrefsKeys {
   static const selectedAnchorName = 'selectedAnchorName';
+  static const newsSummarySentenceCount = 'newsSummarySentenceCount';
 }
 
 /// 정적 prefs 유틸: 인스턴스 생성 금지(오용 방지)
