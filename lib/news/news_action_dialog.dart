@@ -13,8 +13,7 @@ class NewsActionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final savedAnchor =
-        AppPrefs.get<String>(AppPrefsKeys.anchor) ?? AppPrefsDefaults.anchor;
+    final savedAnchor = AppPrefsState.anchor.value;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
