@@ -138,8 +138,8 @@ class _NewsTile extends StatelessWidget {
           if (newsAction == null) return;
           switch (newsAction) {
             case NewsAction.listen:
-              final savedAnchor = AppPrefs.get<String>(AppPrefsKeys.anchor);
-              if (savedAnchor == null) {
+              final savedAnchor = AppPrefsState.anchor.value;
+              if (savedAnchor == AppPrefsDefaults.anchor) {
                 ToastUtils.error('앵커를 먼저 설정해 주세요.');
                 break;
               }
