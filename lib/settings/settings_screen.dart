@@ -19,7 +19,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _savedCount = AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ?? 5;
+    _savedCount =
+        AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ??
+        AppPrefsDefaults.newsSummarySentenceCount;
   }
 
   @override
