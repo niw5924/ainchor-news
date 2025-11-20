@@ -13,9 +13,8 @@ class NewsActionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedAnchorName =
-        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ??
-        AppPrefsDefaults.selectedAnchorName;
+    final savedAnchor =
+        AppPrefs.get<String>(AppPrefsKeys.anchor) ?? AppPrefsDefaults.anchor;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
@@ -47,6 +46,7 @@ class NewsActionDialog extends StatelessWidget {
               itemCount: NewsAction.values.length,
               itemBuilder: (context, index) {
                 final newsAction = NewsAction.values[index];
+
                 return Card(
                   margin: EdgeInsets.zero,
                   clipBehavior: Clip.antiAlias,
@@ -55,7 +55,7 @@ class NewsActionDialog extends StatelessWidget {
                     leading: Icon(newsAction.icon),
                     title: Text(newsAction.label),
                     subtitle: switch (newsAction) {
-                      NewsAction.listen => Text(selectedAnchorName),
+                      NewsAction.listen => Text(savedAnchor),
                       NewsAction.read => Text(host),
                     },
                     onTap: () {

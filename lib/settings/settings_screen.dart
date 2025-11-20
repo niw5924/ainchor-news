@@ -15,17 +15,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late String _savedAnchor;
-  late int _savedCount;
+  late int _savedSummaryCount;
 
   @override
   void initState() {
     super.initState();
     _savedAnchor =
-        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ??
-        AppPrefsDefaults.selectedAnchorName;
-    _savedCount =
-        AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ??
-        AppPrefsDefaults.newsSummarySentenceCount;
+        AppPrefs.get<String>(AppPrefsKeys.anchor) ?? AppPrefsDefaults.anchor;
+    _savedSummaryCount =
+        AppPrefs.get<int>(AppPrefsKeys.summaryCount) ??
+        AppPrefsDefaults.summaryCount;
   }
 
   @override
@@ -41,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(color: AppColors.divider),
           AinchorListTile(
             title: const Text('뉴스 요약 분량'),
-            subtitle: Text('$_savedCount문장'),
+            subtitle: Text('$_savedSummaryCount문장'),
             onTap: () async {
               final newsSummarySentence = await showDialog<NewsSummarySentence>(
                 context: context,
@@ -49,11 +48,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
               if (newsSummarySentence == null) return;
               await AppPrefs.set(
-                AppPrefsKeys.newsSummarySentenceCount,
+                AppPrefsKeys.summaryCount,
                 newsSummarySentence.sentenceCount,
               );
               setState(() {
-                _savedCount = newsSummarySentence.sentenceCount;
+                _savedSummaryCount = newsSummarySentence.sentenceCount;
               });
             },
           ),

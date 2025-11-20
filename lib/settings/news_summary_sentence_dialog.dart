@@ -10,8 +10,9 @@ class NewsSummarySentenceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final newsSummarySentenceCount =
-        AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ?? 5;
+    final savedSummaryCount =
+        AppPrefs.get<int>(AppPrefsKeys.summaryCount) ??
+        AppPrefsDefaults.summaryCount;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
@@ -44,8 +45,7 @@ class NewsSummarySentenceDialog extends StatelessWidget {
               itemBuilder: (context, index) {
                 final newsSummarySentence = NewsSummarySentence.values[index];
                 final isSelected =
-                    newsSummarySentence.sentenceCount ==
-                    newsSummarySentenceCount;
+                    newsSummarySentence.sentenceCount == savedSummaryCount;
 
                 return Card(
                   margin: EdgeInsets.zero,

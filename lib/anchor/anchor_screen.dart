@@ -32,7 +32,7 @@ class _AnchorScreenState extends State<AnchorScreen>
   final List<Artboard> _artboards = [];
   final List<SMIInput<bool>> _talkingInputs = [];
 
-  String? _selectedName;
+  String? _savedAnchor;
   int _currentIndex = 0;
 
   List<Anchor> get _anchors => Anchor.values;
@@ -67,7 +67,7 @@ class _AnchorScreenState extends State<AnchorScreen>
     };
     shellIndex.addListener(_tabListener);
 
-    _selectedName = AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName);
+    _savedAnchor = AppPrefs.get<String>(AppPrefsKeys.anchor);
     _anchorTabAudio.setAsset(_anchors[_currentIndex].audioPath);
   }
 
@@ -114,7 +114,7 @@ class _AnchorScreenState extends State<AnchorScreen>
   Widget _buildAnchorCard(BuildContext context, int index) {
     final anchor = _anchors[index];
     final artboard = _artboards[index];
-    final isSelected = _selectedName == anchor.name;
+    final isSelected = _savedAnchor == anchor.name;
     final isActive = index == _currentIndex;
     final showPause = isActive && _talkingInputs[index].value;
 
@@ -140,13 +140,13 @@ class _AnchorScreenState extends State<AnchorScreen>
             HapticFeedback.mediumImpact();
             final next = isSelected ? null : anchor.name;
             if (next == null) {
-              await AppPrefs.remove(AppPrefsKeys.selectedAnchorName);
+              await AppPrefs.remove(AppPrefsKeys.anchor);
               ToastUtils.success("${anchor.name}을(를) 나만의 앵커에서 해제했어요");
             } else {
-              await AppPrefs.set(AppPrefsKeys.selectedAnchorName, next);
+              await AppPrefs.set(AppPrefsKeys.anchor, next);
               ToastUtils.success("${anchor.name}을(를) 나만의 앵커로 지정했어요");
             }
-            setState(() => _selectedName = next);
+            setState(() => _savedAnchor = next);
           },
           child: contentCard,
         ),

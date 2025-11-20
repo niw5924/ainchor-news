@@ -17,9 +17,9 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = NewsCategory.values;
+    final newsCategory = NewsCategory.values;
     return DefaultTabController(
-      length: categories.length,
+      length: newsCategory.length,
       child: Column(
         children: [
           TabBar(
@@ -29,12 +29,12 @@ class NewsScreen extends StatelessWidget {
             dividerColor: AppColors.divider,
             labelColor: AppColors.primary,
             unselectedLabelColor: AppColors.secondary,
-            tabs: categories.map((c) => Tab(text: c.label)).toList(),
+            tabs: newsCategory.map((c) => Tab(text: c.label)).toList(),
           ),
           Expanded(
             child: TabBarView(
               children:
-                  categories.map((c) => _NewsList(query: c.label)).toList(),
+                  newsCategory.map((c) => _NewsList(query: c.label)).toList(),
             ),
           ),
         ],
@@ -138,10 +138,8 @@ class _NewsTile extends StatelessWidget {
           if (newsAction == null) return;
           switch (newsAction) {
             case NewsAction.listen:
-              final anchorName = AppPrefs.get<String>(
-                AppPrefsKeys.selectedAnchorName,
-              );
-              if (anchorName == null) {
+              final savedAnchor = AppPrefs.get<String>(AppPrefsKeys.anchor);
+              if (savedAnchor == null) {
                 ToastUtils.error('앵커를 먼저 설정해 주세요.');
                 break;
               }
@@ -150,7 +148,7 @@ class _NewsTile extends StatelessWidget {
                 context: context,
                 barrierDismissible: false,
                 builder:
-                    (_) => BriefTtsDialog(anchorName: anchorName, link: link),
+                    (_) => BriefTtsDialog(anchorName: savedAnchor, link: link),
               );
               break;
             case NewsAction.read:
