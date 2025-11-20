@@ -14,7 +14,8 @@ class NewsActionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedAnchorName =
-        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ?? '앵커 미설정';
+        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ??
+        AppPrefsDefaults.selectedAnchorName;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
