@@ -5,6 +5,11 @@ class AppPrefsKeys {
   static const newsSummarySentenceCount = 'newsSummarySentenceCount';
 }
 
+class AppPrefsDefaults {
+  static const String selectedAnchorName = '앵커 미설정';
+  static const int newsSummarySentenceCount = 5;
+}
+
 /// 정적 prefs 유틸: 인스턴스 생성 금지(오용 방지)
 class AppPrefs {
   AppPrefs._();
