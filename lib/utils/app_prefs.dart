@@ -73,9 +73,10 @@ class AppPrefs {
   }
 
   /// 값 조회 (없으면 null)
-  static T? get<T>(String key) {
-    return _prefs!.get(key) as T?;
-  }
+  /// ValueNotifier 도입으로 더 이상 사용하지 않음
+  // static T? get<T>(String key) {
+  //   return _prefs!.get(key) as T?;
+  // }
 
   /// 키 삭제
   static Future<void> remove(String key) async {
