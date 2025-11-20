@@ -10,9 +10,7 @@ class NewsSummarySentenceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final savedSummaryCount =
-        AppPrefs.get<int>(AppPrefsKeys.summaryCount) ??
-        AppPrefsDefaults.summaryCount;
+    final savedSummaryCount = AppPrefsState.summaryCount.value;
 
     return Dialog(
       backgroundColor: AppColors.scaffoldBackground,
