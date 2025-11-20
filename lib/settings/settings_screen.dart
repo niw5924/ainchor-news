@@ -14,11 +14,15 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  late String _savedAnchor;
   late int _savedCount;
 
   @override
   void initState() {
     super.initState();
+    _savedAnchor =
+        AppPrefs.get<String>(AppPrefsKeys.selectedAnchorName) ??
+        AppPrefsDefaults.selectedAnchorName;
     _savedCount =
         AppPrefs.get<int>(AppPrefsKeys.newsSummarySentenceCount) ??
         AppPrefsDefaults.newsSummarySentenceCount;
@@ -29,6 +33,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          AinchorListTile(
+            title: const Text('현재 앵커'),
+            subtitle: Text(_savedAnchor),
+            showTrailing: false,
+          ),
+          const Divider(color: AppColors.divider),
           AinchorListTile(
             title: const Text('뉴스 요약 분량'),
             subtitle: Text('$_savedCount문장'),
