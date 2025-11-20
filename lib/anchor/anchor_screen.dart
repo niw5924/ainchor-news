@@ -67,7 +67,7 @@ class _AnchorScreenState extends State<AnchorScreen>
     };
     shellIndex.addListener(_tabListener);
 
-    _savedAnchor = AppPrefs.get<String>(AppPrefsKeys.anchor);
+    _savedAnchor = AppPrefsState.anchor.value;
     _anchorTabAudio.setAsset(_anchors[_currentIndex].audioPath);
   }
 
