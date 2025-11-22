@@ -9,6 +9,7 @@ import '../api/brief_tts_api.dart';
 import '../constants/anchor_enums.dart';
 import '../constants/app_colors.dart';
 import '../utils/anchor_rive_utils.dart';
+import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
 import '../widgets/anchor_card.dart';
 
@@ -91,7 +92,10 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
                 throw Exception('본문이 비어있습니다.');
               }
 
-              final sumRes = await BriefTtsApi.summary(text: text);
+              final sumRes = await BriefTtsApi.summary(
+                text: text,
+                summaryCount: AppPrefsState.summaryCount.value,
+              );
               final summarized = sumRes['summary'];
               if (summarized == null || summarized.isEmpty) {
                 throw Exception('요약 결과가 없습니다.');

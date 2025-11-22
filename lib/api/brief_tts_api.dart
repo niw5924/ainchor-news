@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'dio_client.dart';
 
 class BriefTtsApi {
-  static Future<dynamic> summary({required String text}) async {
+  static Future<dynamic> summary({
+    required String text,
+    required int summaryCount,
+  }) async {
     final res = await DioClient.dio.post(
       '/api/brief-tts/summary',
-      data: {'text': text},
+      data: {'text': text, 'summaryCount': summaryCount},
     );
     return res.data;
   }
