@@ -20,7 +20,7 @@ class NaverNewsService {
         'query': query,
         'display': naverNewsPageSize,
         'start': start,
-        'sort': 'sim',
+        'sort': 'date',
       },
       options: Options(
         headers: {
