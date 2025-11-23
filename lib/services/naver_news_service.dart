@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../constants/news_sort_enums.dart';
 import '../models/naver_news_model.dart';
 
 const int naverNewsPageSize = 10;
@@ -9,6 +10,7 @@ class NaverNewsService {
   Future<List<NaverNewsModel>> fetchNews({
     required String query,
     required int start,
+    required NewsSort sort,
   }) async {
     final dio = Dio();
     final naverClientId = dotenv.env['NAVER_CLIENT_ID'];
@@ -20,7 +22,7 @@ class NaverNewsService {
         'query': query,
         'display': naverNewsPageSize,
         'start': start,
-        'sort': 'date',
+        'sort': sort.apiValue,
       },
       options: Options(
         headers: {

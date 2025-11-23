@@ -6,18 +6,27 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_colors.dart';
 import '../constants/news_action_enums.dart';
 import '../constants/news_category_enums.dart';
+import '../constants/news_sort_enums.dart';
 import '../models/naver_news_model.dart';
 import '../services/naver_news_service.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
 import 'news_action_dialog.dart';
 
-class NewsScreen extends StatelessWidget {
+class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
+
+  @override
+  State<NewsScreen> createState() => _NewsScreenState();
+}
+
+class _NewsScreenState extends State<NewsScreen> {
+  NewsSort _sort = NewsSort.date;
 
   @override
   Widget build(BuildContext context) {
     final newsCategory = NewsCategory.values;
+
     return DefaultTabController(
       length: newsCategory.length,
       child: Column(
@@ -31,10 +40,38 @@ class NewsScreen extends StatelessWidget {
             unselectedLabelColor: AppColors.secondary,
             tabs: newsCategory.map((c) => Tab(text: c.label)).toList(),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ChoiceChip(
+                label: Text(NewsSort.date.label),
+                selected: _sort == NewsSort.date,
+                onSelected: (selected) {
+                  if (!selected || _sort == NewsSort.date) return;
+                  setState(() {
+                    _sort = NewsSort.date;
+                  });
+                },
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: Text(NewsSort.sim.label),
+                selected: _sort == NewsSort.sim,
+                onSelected: (selected) {
+                  if (!selected || _sort == NewsSort.sim) return;
+                  setState(() {
+                    _sort = NewsSort.sim;
+                  });
+                },
+              ),
+            ],
+          ),
           Expanded(
             child: TabBarView(
               children:
-                  newsCategory.map((c) => _NewsList(query: c.label)).toList(),
+                  newsCategory
+                      .map((c) => _NewsList(query: c.label, sort: _sort))
+                      .toList(),
             ),
           ),
         ],
@@ -44,9 +81,10 @@ class NewsScreen extends StatelessWidget {
 }
 
 class _NewsList extends StatefulWidget {
-  const _NewsList({required this.query});
+  const _NewsList({required this.query, required this.sort});
 
   final String query;
+  final NewsSort sort;
 
   @override
   State<_NewsList> createState() => _NewsListState();
@@ -59,9 +97,21 @@ class _NewsListState extends State<_NewsList> {
     fetchPage: (pageKey) async {
       final start = (pageKey - 1) * naverNewsPageSize + 1;
       if (start > 1000) return <NaverNewsModel>[];
-      return NaverNewsService().fetchNews(query: widget.query, start: start);
+      return NaverNewsService().fetchNews(
+        query: widget.query,
+        start: start,
+        sort: widget.sort,
+      );
     },
   );
+
+  @override
+  void didUpdateWidget(covariant _NewsList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sort != widget.sort) {
+      _pagingController.refresh();
+    }
+  }
 
   @override
   void dispose() {
@@ -143,7 +193,6 @@ class _NewsTile extends StatelessWidget {
                 ToastUtils.error('앵커를 먼저 설정해 주세요.');
                 break;
               }
-
               await showDialog(
                 context: context,
                 barrierDismissible: false,
