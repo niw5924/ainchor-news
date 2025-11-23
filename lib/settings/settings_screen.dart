@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/news_summary_sentence_enums.dart';
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
                 title: const Text('현재 앵커'),
                 subtitle: Text(anchor),
                 showTrailing: false,
+                onTap: () => context.go('/anchor'),
               );
             },
           ),
