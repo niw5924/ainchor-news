@@ -120,10 +120,11 @@ class _NewsListState extends State<_NewsList> {
   }
 
   @override
-  Widget build(BuildContext context) => PagingListener<int, NaverNewsModel>(
-    controller: _pagingController,
-    builder:
-        (context, state, fetchNextPage) => RefreshIndicator(
+  Widget build(BuildContext context) {
+    return PagingListener<int, NaverNewsModel>(
+      controller: _pagingController,
+      builder: (context, state, fetchNextPage) {
+        return RefreshIndicator(
           onRefresh: () async {
             _pagingController.refresh();
           },
@@ -137,8 +138,10 @@ class _NewsListState extends State<_NewsList> {
               itemBuilder: (context, item, index) => _NewsTile(item: item),
             ),
           ),
-        ),
-  );
+        );
+      },
+    );
+  }
 }
 
 class _NewsTile extends StatelessWidget {
