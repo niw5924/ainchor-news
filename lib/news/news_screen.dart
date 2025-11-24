@@ -11,6 +11,7 @@ import '../models/naver_news_model.dart';
 import '../services/naver_news_service.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
+import '../widgets/ainchor_choice_chip.dart';
 import 'news_action_dialog.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -45,8 +46,8 @@ class _NewsScreenState extends State<NewsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ChoiceChip(
-                  label: Text(NewsSort.date.label),
+                AinchorChoiceChip(
+                  label: NewsSort.date.label,
                   selected: _sort == NewsSort.date,
                   onSelected: (selected) {
                     if (!selected || _sort == NewsSort.date) return;
@@ -54,11 +55,10 @@ class _NewsScreenState extends State<NewsScreen> {
                       _sort = NewsSort.date;
                     });
                   },
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 const SizedBox(width: 8),
-                ChoiceChip(
-                  label: Text(NewsSort.sim.label),
+                AinchorChoiceChip(
+                  label: NewsSort.sim.label,
                   selected: _sort == NewsSort.sim,
                   onSelected: (selected) {
                     if (!selected || _sort == NewsSort.sim) return;
@@ -66,7 +66,6 @@ class _NewsScreenState extends State<NewsScreen> {
                       _sort = NewsSort.sim;
                     });
                   },
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ],
             ),
