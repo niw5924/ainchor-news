@@ -36,11 +36,16 @@ class AnchorCard extends StatelessWidget {
       return card;
     }
 
-    return ZoBreathingBorder(
-      borderWidth: 2.0,
-      borderRadius: BorderRadius.circular(16),
-      colors: const [Colors.lightBlueAccent, Colors.blueAccent, Colors.blue],
-      child: card,
+    return Banner(
+      message: 'MY PICK',
+      location: BannerLocation.topEnd,
+      color: AppColors.primary,
+      child: ZoBreathingBorder(
+        borderWidth: 2.0,
+        borderRadius: BorderRadius.circular(16),
+        colors: const [Colors.lightBlueAccent, Colors.blueAccent, Colors.blue],
+        child: card,
+      ),
     );
   }
 }
