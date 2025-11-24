@@ -11,6 +11,7 @@ import '../constants/app_colors.dart';
 import '../utils/anchor_rive_utils.dart';
 import '../utils/app_prefs.dart';
 import '../utils/toast_utils.dart';
+import '../widgets/ainchor_filled_button.dart';
 import '../widgets/anchor_card.dart';
 
 class BriefTtsDialog extends StatefulWidget {
@@ -149,9 +150,9 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextButton(
+                  AinchorFilledButton(
+                    label: '닫기',
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('닫기'),
                   ),
                 ],
               );
