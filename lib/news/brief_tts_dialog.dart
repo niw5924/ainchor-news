@@ -34,6 +34,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
   late final StreamSubscription<PlayerState> _briefTtsAudioSub;
   late final Artboard _artboard;
   late final SMIInput<bool> _talkingInput;
+  late final Future<String> _summaryFuture;
 
   set _talking(bool value) => _talkingInput.value = value;
 
@@ -55,6 +56,44 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
       final talking = s.playing && !completed;
       _talking = talking;
     });
+
+    _summaryFuture = Future<String>(() async {
+      final article = await readability.parseAsync(widget.link);
+      final text = article.textContent;
+      if (text == null || text.isEmpty) {
+        throw Exception('본문이 비어있습니다.');
+      }
+
+      final sumRes = await BriefTtsApi.summary(
+        text: text,
+        summaryCount: AppPrefsState.summaryCount.value,
+      );
+      final summarized = sumRes['summary'];
+      if (summarized == null || summarized.isEmpty) {
+        throw Exception('요약 결과가 없습니다.');
+      }
+
+      return summarized;
+    })..then(
+      (summary) async {
+        try {
+          final bytes = await BriefTtsApi.tts(
+            anchorName: widget.anchorName,
+            summary: summary,
+          );
+          final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
+          await _briefTtsAudio.setUrl(uri.toString());
+          await _briefTtsAudio.play();
+        } catch (e) {
+          ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
+        }
+      },
+
+      /// A의 오류가 B로 전파된 경우를 처리해 Unhandled Exception을 막는다.
+      onError: (error, stackTrace) {
+        ToastUtils.error('요약을 불러오는 중 문제가 발생했습니다.');
+      },
+    );
   }
 
   @override
@@ -86,43 +125,7 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: FutureBuilder<String>(
-            future: Future<String>(() async {
-              final article = await readability.parseAsync(widget.link);
-              final text = article.textContent;
-              if (text == null || text.isEmpty) {
-                throw Exception('본문이 비어있습니다.');
-              }
-
-              final sumRes = await BriefTtsApi.summary(
-                text: text,
-                summaryCount: AppPrefsState.summaryCount.value,
-              );
-              final summarized = sumRes['summary'];
-              if (summarized == null || summarized.isEmpty) {
-                throw Exception('요약 결과가 없습니다.');
-              }
-
-              return summarized;
-            })..then(
-              (summary) async {
-                try {
-                  final bytes = await BriefTtsApi.tts(
-                    anchorName: widget.anchorName,
-                    summary: summary,
-                  );
-                  final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
-                  await _briefTtsAudio.setUrl(uri.toString());
-                  await _briefTtsAudio.play();
-                } catch (e) {
-                  ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
-                }
-              },
-
-              /// A의 오류가 B로 전파된 경우를 처리해 Unhandled Exception을 막는다.
-              onError: (error, stackTrace) {
-                ToastUtils.error('요약을 불러오는 중 문제가 발생했습니다.');
-              },
-            ),
+            future: _summaryFuture,
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
                 return const Center(child: LinearProgressIndicator());
