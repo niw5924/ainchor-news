@@ -103,19 +103,26 @@ class _BriefTtsDialogState extends State<BriefTtsDialog>
               }
 
               return summarized;
-            })..then((summary) async {
-              try {
-                final bytes = await BriefTtsApi.tts(
-                  anchorName: widget.anchorName,
-                  summary: summary,
-                );
-                final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
-                await _briefTtsAudio.setUrl(uri.toString());
-                await _briefTtsAudio.play();
-              } catch (e) {
-                ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
-              }
-            }),
+            })..then(
+              (summary) async {
+                try {
+                  final bytes = await BriefTtsApi.tts(
+                    anchorName: widget.anchorName,
+                    summary: summary,
+                  );
+                  final uri = Uri.dataFromBytes(bytes, mimeType: 'audio/mpeg');
+                  await _briefTtsAudio.setUrl(uri.toString());
+                  await _briefTtsAudio.play();
+                } catch (e) {
+                  ToastUtils.error('음성을 재생하는 중 오류가 발생했습니다.');
+                }
+              },
+
+              /// A의 오류가 B로 전파된 경우를 처리해 Unhandled Exception을 막는다.
+              onError: (error, stackTrace) {
+                ToastUtils.error('요약을 불러오는 중 문제가 발생했습니다.');
+              },
+            ),
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
                 return const Center(child: LinearProgressIndicator());
