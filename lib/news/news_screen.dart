@@ -23,6 +23,13 @@ class NewsScreen extends StatefulWidget {
 
 class _NewsScreenState extends State<NewsScreen> {
   NewsSort _sort = NewsSort.date;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +48,33 @@ class _NewsScreenState extends State<NewsScreen> {
             unselectedLabelColor: AppColors.secondary,
             tabs: newsCategory.map((c) => Tab(text: c.label)).toList(),
           ),
+          const SizedBox(height: 16),
+          SearchBar(
+            controller: _searchController,
+            hintText: '뉴스 검색',
+            leading: const Icon(Icons.search),
+            trailing: [
+              if (_searchController.text.isNotEmpty) ...[
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                    });
+                  },
+                ),
+              ],
+            ],
+            backgroundColor: const WidgetStatePropertyAll(
+              AppColors.appBarBackground,
+            ),
+            onChanged: (value) {
+              setState(() {
+                print(value);
+              });
+            },
+          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -67,6 +101,7 @@ class _NewsScreenState extends State<NewsScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 16),
           Expanded(
             child: TabBarView(
               children:
