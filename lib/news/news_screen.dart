@@ -41,34 +41,31 @@ class _NewsScreenState extends State<NewsScreen> {
             unselectedLabelColor: AppColors.secondary,
             tabs: newsCategory.map((c) => Tab(text: c.label)).toList(),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AinchorChoiceChip(
-                  label: NewsSort.date.label,
-                  selected: _sort == NewsSort.date,
-                  onSelected: (selected) {
-                    if (!selected || _sort == NewsSort.date) return;
-                    setState(() {
-                      _sort = NewsSort.date;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8),
-                AinchorChoiceChip(
-                  label: NewsSort.sim.label,
-                  selected: _sort == NewsSort.sim,
-                  onSelected: (selected) {
-                    if (!selected || _sort == NewsSort.sim) return;
-                    setState(() {
-                      _sort = NewsSort.sim;
-                    });
-                  },
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AinchorChoiceChip(
+                label: NewsSort.date.label,
+                selected: _sort == NewsSort.date,
+                onSelected: (selected) {
+                  if (!selected || _sort == NewsSort.date) return;
+                  setState(() {
+                    _sort = NewsSort.date;
+                  });
+                },
+              ),
+              const SizedBox(width: 8),
+              AinchorChoiceChip(
+                label: NewsSort.sim.label,
+                selected: _sort == NewsSort.sim,
+                onSelected: (selected) {
+                  if (!selected || _sort == NewsSort.sim) return;
+                  setState(() {
+                    _sort = NewsSort.sim;
+                  });
+                },
+              ),
+            ],
           ),
           Expanded(
             child: TabBarView(
