@@ -317,7 +317,7 @@ class _HeadlineNewsTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.3),
                     foregroundColor: AppColors.primary,
                     child: Text(
                       host.isNotEmpty ? host[0].toUpperCase() : '?',
