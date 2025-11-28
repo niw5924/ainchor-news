@@ -222,28 +222,20 @@ class _AnchorScreenState extends State<AnchorScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/worldmap_darkblue_bg.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Swiper(
-        itemCount: _anchors.length,
-        itemBuilder: _buildAnchorCard,
-        onIndexChanged: _onIndexChanged,
-        loop: false,
-        scale: 0.8,
-        fade: 0.8,
-        pagination: SwiperPagination(
-          alignment: Alignment.topCenter,
-          builder: DotSwiperPaginationBuilder(
-            color: AppColors.primary.withValues(alpha: 0.5),
-            activeColor: AppColors.primary,
-            size: 6,
-            activeSize: 8,
-          ),
+    return Swiper(
+      itemCount: _anchors.length,
+      itemBuilder: _buildAnchorCard,
+      onIndexChanged: _onIndexChanged,
+      loop: false,
+      scale: 0.8,
+      fade: 0.8,
+      pagination: SwiperPagination(
+        alignment: Alignment.topCenter,
+        builder: DotSwiperPaginationBuilder(
+          color: AppColors.primary.withValues(alpha: 0.2),
+          activeColor: AppColors.primary,
+          size: 6,
+          activeSize: 8,
         ),
       ),
     );
