@@ -171,7 +171,12 @@ class _NewsListState extends State<_NewsList> {
             physics: const AlwaysScrollableScrollPhysics(),
             separatorBuilder: (_, __) => const SizedBox(height: 16),
             builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
-              itemBuilder: (context, item, index) => _NewsTile(item: item),
+              itemBuilder: (context, item, index) {
+                if (index == 0) {
+                  return _HeadlineNewsTile(item: item);
+                }
+                return _NewsTile(item: item);
+              },
             ),
           ),
         );
@@ -208,10 +213,11 @@ class _NewsTile extends StatelessWidget {
         ),
         title: Text(title),
         subtitle: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(description),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(pubDate),
             Text(
               host,
@@ -244,6 +250,99 @@ class _NewsTile extends StatelessWidget {
               break;
           }
         },
+      ),
+    );
+  }
+}
+
+class _HeadlineNewsTile extends StatelessWidget {
+  const _HeadlineNewsTile({required this.item});
+
+  final NaverNewsModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = item.title;
+    final description = item.description;
+    final pubDate = item.pubDate;
+    final link = item.link;
+    final host = Uri.parse(link).host.replaceFirst('www.', '');
+
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      color: AppColors.cardBackground,
+      child: InkWell(
+        onTap: () async {
+          final newsAction = await showDialog<NewsAction>(
+            context: context,
+            builder: (_) => NewsActionDialog(title: title, host: host),
+          );
+          if (newsAction == null) return;
+          switch (newsAction) {
+            case NewsAction.listen:
+              final savedAnchor = AppPrefsState.anchor.value;
+              if (savedAnchor == AppPrefsDefaults.anchor) {
+                ToastUtils.error('앵커를 먼저 설정해 주세요.');
+                break;
+              }
+              await showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder:
+                    (_) => BriefTtsDialog(anchorName: savedAnchor, link: link),
+              );
+              break;
+            case NewsAction.read:
+              await launchUrl(Uri.parse(link));
+              break;
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(description),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                    foregroundColor: AppColors.primary,
+                    child: Text(
+                      host.isNotEmpty ? host[0].toUpperCase() : '?',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(pubDate),
+                      Text(
+                        host,
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
