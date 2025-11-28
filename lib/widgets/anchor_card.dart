@@ -20,16 +20,17 @@ class AnchorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      color: AppColors.cardBackground,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: Rive(artboard: artboard, fit: BoxFit.contain),
+    final card = Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/worldmap_darkblue_bg.png'),
+          fit: BoxFit.cover,
+        ),
       ),
+      child: Rive(artboard: artboard, fit: BoxFit.contain),
     );
 
     if (!isSelected) {
