@@ -25,6 +25,7 @@ class AnchorCard extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
+        color: Colors.black, // 이미지 로딩 전 배경 색으로 깜빡임 방지
         image: const DecorationImage(
           image: AssetImage('assets/images/worldmap_darkblue_bg.png'),
           fit: BoxFit.cover,
