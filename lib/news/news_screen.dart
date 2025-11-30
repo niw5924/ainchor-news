@@ -173,7 +173,7 @@ class _NewsListState extends State<_NewsList> {
             builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
               itemBuilder: (context, item, index) {
                 if (item.imageUrl != null && item.imageUrl!.isNotEmpty) {
-                  return _HeadlineNewsTile(item: item);
+                  return _ImageNewsTile(item: item);
                 }
                 return _NewsTile(item: item);
               },
@@ -255,8 +255,8 @@ class _NewsTile extends StatelessWidget {
   }
 }
 
-class _HeadlineNewsTile extends StatelessWidget {
-  const _HeadlineNewsTile({required this.item});
+class _ImageNewsTile extends StatelessWidget {
+  const _ImageNewsTile({required this.item});
 
   final NaverNewsModel item;
 
@@ -267,6 +267,7 @@ class _HeadlineNewsTile extends StatelessWidget {
     final pubDate = item.pubDate;
     final link = item.link;
     final host = Uri.parse(link).host.replaceFirst('www.', '');
+    final imageUrl = item.imageUrl!;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -298,50 +299,60 @@ class _HeadlineNewsTile extends StatelessWidget {
               break;
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(description),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisSize: MainAxisSize.min,
+        child: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.network(imageUrl, fit: BoxFit.cover),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.3),
-                    foregroundColor: AppColors.primary,
-                    child: Text(
-                      host.isNotEmpty ? host[0].toUpperCase() : '?',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Column(
+                  const SizedBox(height: 8),
+                  Text(description),
+                  const SizedBox(height: 8),
+                  Row(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(pubDate),
-                      Text(
-                        host,
-                        style: const TextStyle(
-                          decoration: TextDecoration.underline,
+                      CircleAvatar(
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.3,
                         ),
+                        foregroundColor: AppColors.primary,
+                        child: Text(
+                          host.isNotEmpty ? host[0].toUpperCase() : '?',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(pubDate),
+                          Text(
+                            host,
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
