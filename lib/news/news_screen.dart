@@ -172,7 +172,7 @@ class _NewsListState extends State<_NewsList> {
             separatorBuilder: (_, __) => const SizedBox(height: 16),
             builderDelegate: PagedChildBuilderDelegate<NaverNewsModel>(
               itemBuilder: (context, item, index) {
-                if (index == 0) {
+                if (item.imageUrl != null && item.imageUrl!.isNotEmpty) {
                   return _HeadlineNewsTile(item: item);
                 }
                 return _NewsTile(item: item);
