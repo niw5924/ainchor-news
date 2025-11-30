@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../api/dio_client.dart';
 import '../constants/news_sort_enums.dart';
 import '../models/naver_news_model.dart';
 
@@ -12,11 +13,10 @@ class NaverNewsService {
     required int start,
     required NewsSort sort,
   }) async {
-    final dio = Dio();
     final naverClientId = dotenv.env['NAVER_CLIENT_ID'];
     final naverClientSecret = dotenv.env['NAVER_CLIENT_SECRET'];
 
-    final response = await dio.get(
+    final response = await DioClient.dio.get(
       'https://openapi.naver.com/v1/search/news.json',
       queryParameters: {
         'query': query,
